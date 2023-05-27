@@ -12,11 +12,40 @@ export default class NovicePlayer extends Phaser.Physics.Arcade.Sprite {
         this.setBounce(0.2);
         this.setDepth(1);
         this.keyboard = scene.input.keyboard;
-        this.setScale(1.2);
+        //this.setScale(1.2);
 
         // create health
         this.health = [];
         this.maxHealth = 3;
+
+        // create animations
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('nov', { frames: [2] }),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('nov', { frames: [3] }),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'up',
+            frames: this.anims.generateFrameNumbers('nov', { frames: [1] }),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'down',
+            frames: this.anims.generateFrameNumbers('nov', { frames: [0] }),
+            frameRate: 8,
+            repeat: -1
+        });
         
       
     }
@@ -28,10 +57,12 @@ export default class NovicePlayer extends Phaser.Physics.Arcade.Sprite {
         if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A).isDown)
         {
             this.setVelocityX(-300);
+            this.anims.play('left');
         }
         else if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D).isDown)
         {
             this.setVelocityX(300);
+            this.anims.play('right');
         }
         else
         {
@@ -43,10 +74,12 @@ export default class NovicePlayer extends Phaser.Physics.Arcade.Sprite {
         if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W).isDown)
         {
             this.setVelocityY(-300);
+            this.anims.play('up');
         }
         else if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S).isDown)
         {
             this.setVelocityY(300);
+            this.anims.play('down');
         }
         else
         {
