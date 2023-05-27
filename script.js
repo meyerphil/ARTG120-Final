@@ -128,7 +128,26 @@ class Veteran extends Phaser.Scene {
         super('Veteran');
     }
 
+    preload(){
+        this.load.image('tiles', 'assets/lower/bridgeMap.png');
+        this.load.tilemapCSV('map', 'assets/lower/ground.csv');
+
+        this.load.image('houseTiles', 'assets/lower/houses.png');
+        this.load.tilemapCSV('houseMap', 'assets/lower/house.csv');
+    }
+
     create(){
+
+        // create map
+        let map = this.make.tilemap({ key: 'map', tileWidth: 100, tileHeight: 100 });
+        let tileset = map.addTilesetImage('tiles', null, 100,100);
+        let layer = map.createLayer(0, tileset, 0, 0);
+
+        let map2 = this.make.tilemap({ key: 'houseMap', tileWidth: 100, tileHeight: 100 });
+        let houseTileset = map2.addTilesetImage('houseTiles', null, 100,100);
+        let layer2 = map2.createLayer(0, houseTileset, 0, 0);
+        
+
         // create camera
         let cam2 = this.cameras.add(800,0,800,1000);
         //cam.setViewport(800,0,800,1000);
@@ -144,21 +163,42 @@ class Veteran extends Phaser.Scene {
         cam2.startFollow(this.player, true, 0.05, 0.05);
 
         // create world
-        this.walls = this.physics.add.staticGroup();
-        let square = this.add.image(600,100, 'veteranHouse').setOrigin(0,0).setScale(3);
-        let wall = this.add.rectangle(50,500,1600,100, 0xaa0000).setOrigin(0,0);
-        this.walls.add(wall);
-        this.walls.add(square);
+        // this.walls = this.physics.add.staticGroup();
+        // let square = this.add.image(600,100, 'veteranHouse').setOrigin(0,0).setScale(3);
+        // let wall = this.add.rectangle(50,500,1600,100, 0xaa0000).setOrigin(0,0);
+        // this.walls.add(wall);
+        // this.walls.add(square);
 
-        this.door = this.add.rectangle(200,200,100,100, 0xaaaa00).setOrigin(0,0);
+        this.door = this.add.rectangle(0,300,100,100, 0xaaaa00).setOrigin(0,0);
         this.physics.add.existing(this.door);
         
         this.npcs = this.physics.add.staticGroup();
         this.NPCArray = [];
-        this.addNPC(600,300, "hi", '0xaaaaee');
-        this.addNPC(400,100, "yo", '0xeeaaaa');
+        this.addNPC(600,400, "hi", '0xaaaaee');
+        this.addNPC(400,200, "yo", '0xeeaaaa');
 
         // add physics
+        // Enable collision for specific tiles
+        layer2.setCollisionByExclusion([-1], true, layer2);
+        layer2.setDepth(5);
+
+        //layer2.setCollision([4, 5, 6, 2, 3, 0, 1, 20, 21, 22, 18, 19, 16, 17, 2, 3, 18, 19, 4, 5, 6, 20, 21, 22]);
+        this.player.body.setSize(20,20);//, false).setOffset(50,50);
+        // Set up colliders for the layer
+        //this.physics.world.setBounds(0, 0, layer2.widthInPixels, layer2.heightInPixels);
+        this.physics.add.collider(this.player, layer2, (player, tile) => {
+            console.log('player' + this.player.y + " tile " + tile.y * 100);
+            if (this.player.y < tile.y * 100) {
+                this.player.setDepth(0);  // Render player underneath the tiles
+            } else {
+                this.player.setDepth(10);  // Render player above the tiles
+            }
+        });
+        
+
+        // Customizing tile properties for collision
+        //layer.setTileLocationCallback(x, y, width, height, callback, context);
+
         this.physics.add.collider(this.player, this.walls);
 
         this.physics.add.collider(this.player, this.door, ()=>{
@@ -225,7 +265,7 @@ class Desert extends Phaser.Scene {
     
     preload(){
         this.load.image('tiles', 'assets/bridgeMap.png');
-        this.load.tilemapCSV('map', 'assets/bridge.csv');
+        this.load.tilemapCSV('roadmap', 'assets/bridge.csv');
     }
 
     create(){
@@ -241,9 +281,9 @@ class Desert extends Phaser.Scene {
 
 
         // create map
-        const map = this.make.tilemap({ key: 'map', tileWidth: 100, tileHeight: 100 });
-        const tileset = map.addTilesetImage('tiles', null, 100,100);
-        const layer = map.createLayer(0, tileset, 0, 0);
+        let map = this.make.tilemap({ key: 'roadmap', tileWidth: 100, tileHeight: 100 });
+        let tileset = map.addTilesetImage('tiles', null, 100,100);
+        let layer = map.createLayer(0, tileset, 0, 0);
 
         // create world
         // this.walls = this.physics.add.staticGroup();

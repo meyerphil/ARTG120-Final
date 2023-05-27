@@ -13,6 +13,7 @@ export default class VeteranPlayer extends Phaser.Physics.Arcade.Sprite {
         this.setDepth(1);
         this.keyboard = scene.input.keyboard;
         //this.setScale(1.2);
+        
 
         // create health
         this.health = [];
