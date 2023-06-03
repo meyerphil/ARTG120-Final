@@ -17,33 +17,37 @@ export default class NovicePlayer extends Phaser.Physics.Arcade.Sprite {
         // create health
         this.health = [];
         this.maxHealth = 3;
+        this.moveSpeed = 200;
+
+        // create animations
+        // https://labs.phaser.io/edit.html?src=src/animation/create%20animation%20from%20sprite%20sheet.js
 
         // create animations
         this.anims.create({
             key: 'left',
-            frames: this.anims.generateFrameNumbers('nov', { frames: [2] }),
-            frameRate: 8,
-            repeat: -1
+            frames: this.anims.generateFrameNumbers('nov', { frames: [9,10,9,11] }),
+            frameRate: 4,
+            repeat: -1,
         });
 
         this.anims.create({
             key: 'right',
-            frames: this.anims.generateFrameNumbers('nov', { frames: [3] }),
-            frameRate: 8,
+            frames: this.anims.generateFrameNumbers('nov', { frames: [3,4,3,5] }),
+            frameRate: 4,
             repeat: -1
         });
 
         this.anims.create({
             key: 'up',
-            frames: this.anims.generateFrameNumbers('nov', { frames: [1] }),
-            frameRate: 8,
+            frames: this.anims.generateFrameNumbers('nov', { frames: [6,7,6,8] }),
+            frameRate: 4,
             repeat: -1
         });
 
         this.anims.create({
             key: 'down',
-            frames: this.anims.generateFrameNumbers('nov', { frames: [0] }),
-            frameRate: 8,
+            frames: this.anims.generateFrameNumbers('nov', { frames: [0,1,0,2] }),
+            frameRate: 4,
             repeat: -1
         });
         
@@ -52,38 +56,45 @@ export default class NovicePlayer extends Phaser.Physics.Arcade.Sprite {
   
     update() {
 
-        // horizontal movement
+        // horizontal
 
         if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A).isDown)
         {
-            this.setVelocityX(-300);
-            this.anims.play('left');
+            this.setVelocityX(-this.moveSpeed);
+            this.anims.play('left', true);
+            this.setVelocityY(0);
         }
         else if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D).isDown)
         {
-            this.setVelocityX(300);
-            this.anims.play('right');
+            this.setVelocityX(this.moveSpeed);
+            this.anims.play('right', true);
+            this.setVelocityY(0);
         }
         else
-        {
-            this.setVelocityX(0);
-        }
-
         // vertical movement
 
         if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W).isDown)
         {
-            this.setVelocityY(-300);
-            this.anims.play('up');
+            this.setVelocityY(-this.moveSpeed);
+            this.anims.play('up', true);
+            this.setVelocityX(0);
         }
         else if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S).isDown)
         {
-            this.setVelocityY(300);
-            this.anims.play('down');
+            this.setVelocityY(this.moveSpeed);
+            this.anims.play('down', true);
+            this.setVelocityX(0);
         }
         else
         {
             this.setVelocityY(0);
+            this.setVelocityX(0);
+
+                let first = this.anims.currentAnim;
+                if(first)
+                    this.setFrame(first.frames[0].textureFrame);
+                    this.anims.stop();
+
         }
 
         

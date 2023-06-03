@@ -18,33 +18,34 @@ export default class VeteranPlayer extends Phaser.Physics.Arcade.Sprite {
         // create health
         this.health = [];
         this.maxHealth = 3;
+        this.moveSpeed = 150;
         
         // create animations
         this.anims.create({
             key: 'left',
-            frames: this.anims.generateFrameNumbers('vet', { frames: [2] }),
-            frameRate: 8,
-            repeat: -1
+            frames: this.anims.generateFrameNumbers('vet', { frames: [9,10,9,11] }),
+            frameRate: 4,
+            repeat: -1,
         });
 
         this.anims.create({
             key: 'right',
-            frames: this.anims.generateFrameNumbers('vet', { frames: [3] }),
-            frameRate: 8,
+            frames: this.anims.generateFrameNumbers('vet', { frames: [3,4,3,5] }),
+            frameRate: 4,
             repeat: -1
         });
 
         this.anims.create({
             key: 'up',
-            frames: this.anims.generateFrameNumbers('vet', { frames: [1] }),
-            frameRate: 8,
+            frames: this.anims.generateFrameNumbers('vet', { frames: [6,7,6,8] }),
+            frameRate: 4,
             repeat: -1
         });
 
         this.anims.create({
             key: 'down',
-            frames: this.anims.generateFrameNumbers('vet', { frames: [0] }),
-            frameRate: 8,
+            frames: this.anims.generateFrameNumbers('vet', { frames: [0,1,0,2] }),
+            frameRate: 4,
             repeat: -1
         });
       
@@ -56,34 +57,41 @@ export default class VeteranPlayer extends Phaser.Physics.Arcade.Sprite {
 
         if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT).isDown)
         {
-            this.setVelocityX(-300);
-            this.anims.play('left');
+            this.setVelocityX(-this.moveSpeed);
+            this.anims.play('left', true);
+            this.setVelocityY(0);
         }
         else if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT).isDown)
         {
-            this.setVelocityX(300);
-            this.anims.play('right');
+            this.setVelocityX(this.moveSpeed);
+            this.anims.play('right', true);
+            this.setVelocityY(0);
         }
         else
-        {
-            this.setVelocityX(0);
-        }
-
         // vertical movement
 
         if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP).isDown)
         {
-            this.setVelocityY(-300);
-            this.anims.play('up');
+            this.setVelocityY(-this.moveSpeed);
+            this.anims.play('up', true);
+            this.setVelocityX(0);
         }
         else if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN).isDown)
         {
-            this.setVelocityY(300);
-            this.anims.play('down');
+            this.setVelocityY(this.moveSpeed);
+            this.anims.play('down', true);
+            this.setVelocityX(0);
         }
         else
         {
             this.setVelocityY(0);
+            this.setVelocityX(0);
+
+                let first = this.anims.currentAnim;
+                if(first)
+                    this.setFrame(first.frames[0].textureFrame);
+                    this.anims.stop();
+
         }
         
     }

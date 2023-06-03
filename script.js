@@ -9,8 +9,8 @@ class Start extends Phaser.Scene {
     }
     preload(){
         this.load.image('dude', 'assets/ewok.png');
-        this.load.spritesheet('vet', 'assets/veteranSheet.png', { frameWidth: 100, frameHeight: 100 });
-        this.load.spritesheet('nov', 'assets/noviceSheet.png', { frameWidth: 100, frameHeight: 100 });
+        this.load.spritesheet('vet', 'assets/Veteran_Sheet_02.png', { frameWidth: 55, frameHeight: 90 });
+        this.load.spritesheet('nov', 'assets/Novice_Sheet_02.png', { frameWidth: 50, frameHeight: 76});
         this.load.image('noviceHouse', 'assets/oasishouse-3.png');
         this.load.image('veteranHouse', 'assets/deserthouse-3.png');
     }
@@ -155,6 +155,7 @@ class Veteran extends Phaser.Scene {
         cam2.zoom = 1.5;
         //this.cameras.main = cam2;
         this.cameras.main.setVisible(false);
+        cam2.setBounds(0, 0, 1600, 1000);
 
         //create player
         this.player = new VeteranPlayer(this, 500, 300, 'vet');
