@@ -15,7 +15,7 @@ class Start extends Phaser.Scene {
         this.load.image('veteranHouse', 'assets/deserthouse-3.png');
         this.load.image('diaBox', 'assets/UIAssets/Text_Box.png');
         this.load.image('civBubble', 'assets/UIAssets/Blurb_Civilians.png');
-        this.load.image('novicePortrait', 'assets/Player/NoviceMCPort.png');
+        this.load.image('novicePortrait', 'assets/Player/NoviceMCport.png');
         this.load.image('npcCiv1', 'assets/NPC/CivilianNPC_01.png');
         this.load.image('npcCiv1Portrait', 'assets/NPC/CivilianNPCport_01.png');
         this.load.image('npcCiv2', 'assets/NPC/CivilianNPC_02.png');
