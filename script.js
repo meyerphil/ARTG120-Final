@@ -25,7 +25,7 @@ class Start extends Phaser.Scene {
         //this.cameras.main.setBackgroundColor(0x00ff00);
         this.scale.setZoom(0.8);
 
-        this.scene.launch('Novice');
+        this.scene.launch('NoviceHouse');
         this.scene.launch('Veteran');
         // this.addFullScreen();
 
@@ -103,6 +103,68 @@ class Novice extends Phaser.Scene {
 
         // add dialog
 
+        this.initDialog();
+
+        // add NPCS
+        this.npcs = this.physics.add.staticGroup();
+        this.NPCArray = [];
+        //this.addNPC(300,100, '...', '0xaaaaee');
+        this.addNPC(600,200, [{self: false, text: 'I don’t understand why they are even complaining. A strike is unnecessary.'},
+                                {self: false, text: 'They enjoy the work. If you ask me, I should be the one to complain.'},
+                                {self: true, text: 'ok.'}], 'npcCiv1', 'civBubble', 
+                                this.novicePortrait, this.npcCiv1Portrait);
+
+        this.addNPC(300,100, [{self: false, text: 'They should put in more effort instead of using the strike as an excuse to get out of work.'}, 
+                                {self: false, text: 'If they really want to be respected they should work.'}],
+                                'npcCiv2', 'civBubble', 
+                                this.novicePortrait, this.npcCiv2Portrait);
+
+        // add physics
+        this.physics.add.collider(this.player, this.walls);
+
+        this.noviceInteractionNPC();
+
+        this.physics.add.collider(this.player, this.door, ()=>{
+            this.game.gameOptions.noviceLocation = 'desert';
+            console.log('to desert!');
+            this.scene.stop();
+            if(this.scene.isActive('Desert'))
+                this.scene.resume('Desert');
+            else
+                this.scene.launch('Desert');
+
+        });
+
+        //console.log(this.NPCArray);
+
+    }
+
+    noviceInteractionNPC(){
+        // // Step 4: Listen for 'e' key press event
+        this.physics.add.overlap(this.player, this.npcs, (player, npc)=>{
+            //console.log('touching');
+            
+            if (this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E).isDown){
+                let npc222 = this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)];
+                
+                if(npc222.pause)
+                    return;
+                npc222.pause = true;
+
+                if(npc222.convoIndex > 0){
+                    if(npc222.text[npc222.convoIndex - 1].self){ // disable portraits
+                        npc222.self.setAlpha(0);
+                    } else {
+                        npc222.npcPort.setAlpha(0);
+                    }
+                }
+                this.dialogNext(npc222);
+            }
+
+        });
+    }
+
+    initDialog(){
         this.diaBox = this.add.image(480,600, 'diaBox')
         .setOrigin(0.5,0)
         .setScale(1)
@@ -143,60 +205,6 @@ class Novice extends Phaser.Scene {
         .setScrollFactor(0)
         .setScale(1)
         .setDepth(20);
-
-        // add NPCS
-        this.npcs = this.physics.add.staticGroup();
-        this.NPCArray = [];
-        //this.addNPC(300,100, '...', '0xaaaaee');
-        this.addNPC(600,200, [{self: false, text: 'I don’t understand why they are even complaining. A strike is unnecessary.'},
-                                {self: false, text: 'They enjoy the work. If you ask me, I should be the one to complain.'},
-                                {self: true, text: 'ok.'}], 'npcCiv1', 'civBubble', 
-                                this.novicePortrait, this.npcCiv1Portrait);
-
-        this.addNPC(300,100, [{self: false, text: 'They should put in more effort instead of using the strike as an excuse to get out of work.'}, 
-                                {self: false, text: 'If they really want to be respected they should work.'}],
-                                'npcCiv2', 'civBubble', 
-                                this.novicePortrait, this.npcCiv2Portrait);
-
-        // add physics
-        this.physics.add.collider(this.player, this.walls);
-
-        // // Step 4: Listen for 'e' key press event
-        this.physics.add.overlap(this.player, this.npcs, (player, npc)=>{
-            //console.log('touching');
-            
-            if (this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E).isDown){
-                let npc222 = this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)];
-                
-                if(npc222.pause)
-                    return;
-                npc222.pause = true;
-
-                if(npc222.convoIndex > 0){
-                    if(npc222.text[npc222.convoIndex - 1].self){ // disable portraits
-                        npc222.self.setAlpha(0);
-                    } else {
-                        npc222.npcPort.setAlpha(0);
-                    }
-                }
-                this.dialogNext(npc222);
-            }
-
-        });
-
-        this.physics.add.collider(this.player, this.door, ()=>{
-            this.game.gameOptions.noviceLocation = 'desert';
-            console.log('to desert!');
-            this.scene.stop();
-            if(this.scene.isActive('Desert'))
-                this.scene.resume('Desert');
-            else
-                this.scene.launch('Desert');
-
-        });
-
-        //console.log(this.NPCArray);
-
     }
 
     dialogNext(npc222){
@@ -423,9 +431,9 @@ class Veteran extends Phaser.Scene {
             // Set the zoom level to 0.8
             this.scale.setZoom(0.8);
         }, this);
-        this.add.text(750,1050, "FULLSCREEN")
+        this.add.text(600,800, "FULLSCREEN")
             .setScrollFactor(0)
-            .setStyle({ fontSize: `30px` })
+            .setStyle({ fontSize: `20px` })
             .setInteractive({useHandCursor: true})
             .on('pointerdown', () => {
                 if (this.scale.isFullscreen) {
@@ -441,17 +449,28 @@ class Veteran extends Phaser.Scene {
 }
 
 class DoubleScene extends Phaser.Scene {
-    constructor(key,name) {
+    constructor(key,name, coords1, coords2) {
         super(key);
         this.sceneName = name;
+        this.p1Cords = coords1;
+        this.p2Cords = coords2;
     }
     
     preload(){
+    
+    }
+
+    init(){
+        this.camIgnoreList = [];
+        this.cam2IgnoreList = [];
+
+        // add NPCS
+        this.npcs = this.physics.add.staticGroup();
+        this.NPCArray = [];
     }
 
     create(){
         this.cameras.main.setVisible(false);
-        this.addFullScreen();
 
         console.log(this.game.gameOptions.noviceLocation);
         // create player(s)
@@ -461,6 +480,7 @@ class DoubleScene extends Phaser.Scene {
         if(this.game.gameOptions.veteranLocation == this.sceneName)
             this.createVeteran();
 
+        
 
     }
 
@@ -478,23 +498,37 @@ class DoubleScene extends Phaser.Scene {
 
     createNovice(){
         // create camera
-        let cam = this.cameras.add(0,0,955,1080);
+        this.cam = this.cameras.add(0,0,955,1080);
         //cam.setViewport(800,0,800,1000);
-        cam.setBackgroundColor(0x440022);
-        cam.zoom = 1.9;
-        cam.setBounds(0, 0, 1900, 1000);
+        this.cam.setBackgroundColor(0x440022);
+        this.cam.zoom = 1.9;
+        this.cam.setBounds(0, 0, 1900, 1000);
         // cam.scrollY +=100;
         //this.cameras.main = cam;
         this.cameras.main.setVisible(false);
+        
 
         // create player
-        this.player = new NovicePlayer(this, 100, 300, 'nov');
-        
-        // follow camera
-        cam.startFollow(this.player, true, 0.05, 0.05);
+        if(this.p1Cords) {
+            this.player = new NovicePlayer(this, this.p1Cords[0], this.p1Cords[1], 'nov');
+        } else {
+            this.player = new NovicePlayer(this, 100, 300, 'nov');
+        }
+        // add dialog
+        //this.initDialogNovice();
 
-        // overlap with players
+        this.noviceInteractionNPC();
+
+        // follow camera
+        this.cam.startFollow(this.player, true, 0.05, 0.05);
+
+        this.cam.ignore(this.camIgnoreList);
+
+        // overlap with players and ignore check
         if(this.player2){
+            this.cam2.ignore(this.cam2IgnoreList);
+
+
             this.physics.add.overlap(this.player, this.player2, () => {
                 console.log('player2 ' + this.player2.y + " player " + this.player.y );
                 if (this.player2.y < this.player.y ) {
@@ -506,27 +540,31 @@ class DoubleScene extends Phaser.Scene {
                 }
             });
         }
+        
     }
     
     createVeteran(){
         // create camera
-        let cam2 = this.cameras.add(965,0,960,1080);
+        this.cam2 = this.cameras.add(965,0,955,1080);
         //cam.setViewport(800,0,800,1000);
-        cam2.setBackgroundColor(0x002244);
-        cam2.zoom = 1.9;
-        cam2.setBounds(0, 0, 1900, 1000);
+        this.cam2.setBackgroundColor(0x002244);
+        this.cam2.zoom = 1.9;
+        this.cam2.setBounds(0, 0, 1900, 1000);
         //this.cameras.main = cam2;
         this.cameras.main.setVisible(false);
+        this.addFullScreen();
 
         //create player
         this.player2 = new VeteranPlayer(this, 1200, 300, 'vet');
         
         // follow camera
-        cam2.startFollow(this.player2, true, 0.05, 0.05);
+        this.cam2.startFollow(this.player2, true, 0.05, 0.05);
+        this.cam2.ignore(this.cam2IgnoreList);
 
-
-        // overlap with players
+        // overlap with players and ignore check
         if(this.player){
+            this.cam.ignore(this.camIgnoreList);
+
             this.physics.add.overlap(this.player, this.player2, () => {
                 console.log('player2 ' + this.player2.y + " player " + this.player.y );
                 if (this.player2.y < this.player.y ) {
@@ -546,8 +584,9 @@ class DoubleScene extends Phaser.Scene {
             // Set the zoom level to 0.8
             this.scale.setZoom(0.8);
         }, this);
-        this.add.text(1700,1050, "FULLSCREEN")
-            .setStyle({ fontSize: `30px` })
+        let fullscreen = this.add.text(600,800, "FULLSCREEN")
+            .setScrollFactor(0)
+            .setStyle({ fontSize: `20px` })
             .setInteractive({useHandCursor: true})
             .on('pointerdown', () => {
                 if (this.scale.isFullscreen) {
@@ -557,9 +596,260 @@ class DoubleScene extends Phaser.Scene {
                     this.scale.startFullscreen();
                     this.scale.setZoom(1);
                 }
+            });
+
+        this.camIgnoreList.push(fullscreen);
+    }
+
+    initDialogNovice(){
+        this.diaBox = this.add.image(480,600, 'diaBox')
+        .setOrigin(0.5,0)
+        .setScale(1)
+        .setScrollFactor(0)
+        .setAlpha(1)
+        .setDepth(20);
+        this.cam2IgnoreList.push(this.diaBox);
+
+        this.novicePortrait = this.add.image(310,600, 'novicePortrait')
+        .setOrigin(0,1)
+        .setScale(1.5)
+        .setScrollFactor(0)
+        .setAlpha(0)
+        .setDepth(20);
+        this.cam2IgnoreList.push(this.novicePortrait);
+
+        this.npcCiv1Portrait = this.add.image(650,600, 'npcCiv1Portrait')
+        .setOrigin(1,1)
+        .setScale(1.5)
+        .setScrollFactor(0)
+        .setAlpha(0)
+        .setDepth(20);
+        this.cam2IgnoreList.push(this.npcCiv1Portrait);
+
+        this.npcCiv2Portrait = this.add.image(650,600, 'npcCiv2Portrait')
+        .setOrigin(1,1)
+        .setScale(1.5)
+        .setScrollFactor(0)
+        .setAlpha(0)
+        .setDepth(20);
+        this.cam2IgnoreList.push(this.npcCiv2Portrait);
+
+        this.diaBoxText = this.add.text(320, 621, "Placeholder, hello and welcome to my code! I didn't expect anyone reading this. I am writing this at 1:17am, 6/4/23", {
+            fontFamily: 'Century Gothic',
+            fontSize: 22,
+            color: '#ffffff',
+            align: "left",
+            wordWrap: { width: 350, useAdvancedWrap: true},
+            lineSpacing: 15,
+        })
+        .setAlpha(1)
+        .setScrollFactor(0)
+        .setScale(1)
+        .setDepth(20);
+
+        this.cam2IgnoreList.push(this.diaBoxText);
+    }
+
+    noviceInteractionNPC(){
+        // // Step 4: Listen for 'e' key press event
+        this.physics.add.overlap(this.player, this.npcs, (player, npc)=>{
+            //console.log('touching');
+            if (this.player.y < npc.y + 50) {
+                this.player.setDepth(0);  // Render player underneath the tiles
+            } else {
+                this.player.setDepth(10);  // Render player above the tiles
+            }
+
+            if (this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E).isDown){
+                let npc222 = this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)];
+                //console.log(npc222);
+                
+                if(npc222.pause)
+                    return;
+                npc222.pause = true;
+
+                if(npc222.convoIndex > 0){
+                    if(npc222.text[npc222.convoIndex - 1].self){ // disable portraits
+                        npc222.self.setAlpha(0);
+                    } else {
+                        npc222.npcPort.setAlpha(0);
+                    }
+                }
+                this.dialogNext(npc222);
+            }
+
         });
     }
 
+    dialogNext(npc222){
+        if(npc222.convoIndex == npc222.text.length){
+            console.log('done');
+            this.diaBox.setAlpha(0);
+            this.diaBoxText.setAlpha(0);
+            npc222.bubble.setAlpha(0);
+            npc222.convoIndex = 0;
+            this.player.canMove = true;
+            this.time.addEvent({
+                delay: 1000,
+                callback: ()=> {npc222.pause = false;},
+                loop: false
+            });
+        } else {
+
+            this.diaBox.setAlpha(1);
+            this.diaBoxText.setAlpha(1);
+            npc222.bubble.setAlpha(1);
+            if(npc222.text[npc222.convoIndex].self){ // enable portraits
+                npc222.self.setAlpha(1);
+            } else {
+                npc222.npcPort.setAlpha(1);
+            }
+            this.player.canMove = false;
+
+            // Split the text into individual words
+            let words = npc222.text[npc222.convoIndex].text.split(" ");
+            this.diaBoxText.text = "";
+            let currentIndex = 0;
+
+            // Start displaying the text one word at a time
+            let event = this.time.addEvent({
+                delay: 100, // Delay between each word (in milliseconds)
+                callback: () => {
+                    // Check if there are more words to display
+                    if (currentIndex < words.length) {
+                        // Get the next word to display
+                        var word = words[currentIndex];
+                
+                        // Increment the current index
+                        currentIndex++;
+                
+                        // Update the text content
+                        this.diaBoxText.text = this.diaBoxText.text + " " + word;
+                    } else {
+                        // All words have been displayed, stop the event
+                        npc222.pause = false;
+                        npc222.convoIndex++;
+
+                        event.remove();
+                    }
+                },
+                callbackScope: this,
+                loop: true
+            });
+        }
+    }
+
+    
+
+    addNPC(x,y, text, image, bubble, selfPort, NPCPort){
+        let NPC;
+        if(image)
+            NPC = this.add.image(x, y, image).setOrigin(0,0).setDepth(7);
+        else
+            NPC = this.add.rectangle(x-10,y-10,120,120, "0x000000").setOrigin(0,0).setAlpha(0).setDepth(7);
+
+        let textObj = this.add.image(x+50, y-30, bubble)
+        .setOrigin(0.5,0)
+        .setScale(2)
+        .setAlpha(0)
+        .setDepth(7);
+        //this.add.text(x+50, y-50, '...', { font: '16px Arial', fill: '#ffffff' }).setOrigin(0.5,1).setAlpha(0);
+        let textNPC = text;
+        this.npcs.add(NPC);
+        this.NPCArray.push({npc: NPC, text: textNPC, convoIndex: 0, bubble: textObj, 
+                            pause: false,
+                            self: selfPort,
+                            npcPort: NPCPort});
+
+        //console.log(this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == NPC)].text.text);
+    }
+
+}
+
+class NoviceHouse extends DoubleScene {
+    constructor() {
+        super('NoviceHouse', 'NoviceHouse',[550,150]);
+    }
+    
+    preload(){
+        this.load.image('noviceRoomTiles', 'assets/NoviceRoom/NoviceRoomSpriteSheet.png');
+        this.load.tilemapCSV('NoviceRoom-ground', 'assets/NoviceRoom/NoviceRoom_ground.csv');
+        this.load.tilemapCSV('NoviceRoom-objects', 'assets/NoviceRoom/NoviceRoom_objects.csv');
+    }
+
+    create(){
+        // create map
+        let map = this.make.tilemap({ key: 'NoviceRoom-ground', tileWidth: 100, tileHeight: 100 });
+        let tileset = map.addTilesetImage('noviceRoomTiles', null, 100,100);
+        this.layer = map.createLayer(0, tileset, 0, 0);
+
+        let map2 = this.make.tilemap({ key: 'NoviceRoom-objects', tileWidth: 100, tileHeight: 100 });
+        let houseTileset = map2.addTilesetImage('noviceRoomTiles', null, 100,100);
+        this.layer2 = map2.createLayer(0, houseTileset, 0, 0);
+
+
+        this.door = this.add.rectangle(400,450,100,100, 0xaaaaaa).setOrigin(0,0);
+        this.physics.add.existing(this.door);
+
+        // add physics
+        
+        // Enable collision for specific tiles
+        this.layer2.setCollisionByExclusion([-1]);
+        this.layer2.setDepth(5);
+        this.layer.setCollision([5]);
+
+        this.p1Init = false;
+
+        // add dialog
+        super.initDialogNovice();
+
+        //book
+        super.addNPC(600,300, [{self: true, text: 'The textbook is opened to a page about the purple rocks used to power everything within the city.'},
+                                {self: true, text: 'Its pure unrefined form is only found above the surface.'}],
+                                null, 'civBubble', 
+                                this.novicePortrait, this.npcCiv1Portrait);
+
+        //rocks
+        super.addNPC(200,100, [{self: true, text: 'A collection of gems I’ve earned. There is a spot open for my next gem.'}],
+                                null, 'civBubble', 
+                                this.novicePortrait, this.npcCiv1Portrait);
+        
+
+    }
+
+    update(){
+
+        super.update();
+
+        if(this.player && !this.p1Init){
+            this.cam.setBackgroundColor(0x000000);
+            this.p1Init = true;
+
+            this.player.body.setSize(20,75);
+            this.physics.add.collider(this.player, this.layer);
+            this.physics.add.collider(this.player, this.layer2, (player, tile) => {
+                //console.log('player' + this.player.y + " tile " + tile.y * 100);
+                if (this.player.y < tile.y * 100) {
+                    this.player.setDepth(0);  // Render player underneath the tiles
+                } else {
+                    this.player.setDepth(10);  // Render player above the tiles
+                }
+            });
+
+            this.physics.add.collider(this.player, this.door, ()=>{
+                this.game.gameOptions.noviceLocation = 'desert';
+                console.log('to desert!');
+                this.scene.stop();
+                if(this.scene.isActive('Desert'))
+                    this.scene.resume('Desert');
+                else
+                    this.scene.launch('Desert');
+    
+            });
+
+        }
+        
+    }
 }
 
 class Desert extends DoubleScene {
@@ -591,6 +881,19 @@ class Desert extends DoubleScene {
 
         this.p1Init = false;
         this.p2Init = false;
+
+        //this.addNPC(300,100, '...', '0xaaaaee');
+        super.initDialogNovice();
+        super.addNPC(500,300, [{self: false, text: 'I don’t understand why they are even complaining. A strike is unnecessary.'},
+                                {self: false, text: 'They enjoy the work. If you ask me, I should be the one to complain.'},
+                                {self: true, text: 'ok.'}], null, 'civBubble', 
+                                this.novicePortrait, this.npcCiv1Portrait);
+
+        super.addNPC(300,600, [{self: false, text: 'They should put in more effort instead of using the strike as an excuse to get out of work.'}, 
+                                {self: false, text: 'If they really want to be respected they should work.'}],
+                                'npcCiv2', 'civBubble', 
+                                this.novicePortrait, this.npcCiv2Portrait);
+        
 
     }
 
@@ -633,6 +936,8 @@ class Desert extends DoubleScene {
 }
 
 
+
+
 let config = {
     type: Phaser.WEBGL,
     width: 1920,
@@ -644,7 +949,7 @@ let config = {
             //gravity: { y: 600 }
         }
     },
-    scene: [Start, Novice, Veteran, Desert],
+    scene: [Start, Novice, Veteran, Desert, NoviceHouse],
     checkpt: false,
     pixelArt: true,
 }
@@ -652,6 +957,6 @@ let config = {
 let game = new Phaser.Game(config);
 
 game.gameOptions = {
-    noviceLocation: 'upper',
+    noviceLocation: 'NoviceHouse',
     veteranLocation: 'lower',
 }
