@@ -132,7 +132,7 @@ class Novice extends Phaser.Scene {
         .setDepth(20);
 
         this.diaBoxText = this.add.text(320, 621, "Placeholder, hello and welcome to my code! I didn't expect anyone reading this. I am writing this at 1:17am, 6/4/23", {
-            fontFamily: 'Times New Roman',
+            fontFamily: 'Century Gothic',
             fontSize: 22,
             color: '#ffffff',
             align: "left",
@@ -148,11 +148,13 @@ class Novice extends Phaser.Scene {
         this.npcs = this.physics.add.staticGroup();
         this.NPCArray = [];
         //this.addNPC(300,100, '...', '0xaaaaee');
-        this.addNPC(600,200, [{self: false, text: 'I don’t understand why they are even complaining. A strike is unnecessary. They enjoy the work. If you ask me, I should be the one to complain.'},
+        this.addNPC(600,200, [{self: false, text: 'I don’t understand why they are even complaining. A strike is unnecessary.'},
+                                {self: false, text: 'They enjoy the work. If you ask me, I should be the one to complain.'},
                                 {self: true, text: 'ok.'}], 'npcCiv1', 'civBubble', 
                                 this.novicePortrait, this.npcCiv1Portrait);
 
-        this.addNPC(300,100, [{self: false, text: 'They should put in more effort instead of using the strike as an excuse to get out of work. If they really want to be respected they should work.'}], 
+        this.addNPC(300,100, [{self: false, text: 'They should put in more effort instead of using the strike as an excuse to get out of work.'}, 
+                                {self: false, text: 'If they really want to be respected they should work.'}],
                                 'npcCiv2', 'civBubble', 
                                 this.novicePortrait, this.npcCiv2Portrait);
 
