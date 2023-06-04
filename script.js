@@ -9,19 +9,62 @@ class Start extends Phaser.Scene {
     }
     preload(){
         this.load.image('dude', 'assets/ewok.png');
-        this.load.spritesheet('vet', 'assets/Veteran_Sheet_02.png', { frameWidth: 55, frameHeight: 90 });
-        this.load.spritesheet('nov', 'assets/Novice_Sheet_02.png', { frameWidth: 50, frameHeight: 76});
+        this.load.spritesheet('vet', 'assets/Player/Veteran_Sheet_02.png', { frameWidth: 55, frameHeight: 90 });
+        this.load.spritesheet('nov', 'assets/Player/Novice_Sheet_02.png', { frameWidth: 50, frameHeight: 76});
         this.load.image('noviceHouse', 'assets/oasishouse-3.png');
         this.load.image('veteranHouse', 'assets/deserthouse-3.png');
+        this.load.image('diaBox', 'assets/UIAssets/Text_Box.png');
+        this.load.image('civBubble', 'assets/UIAssets/Blurb_Civilians.png');
+        this.load.image('novicePortrait', 'assets/Player/NoviceMCPort.png');
+        this.load.image('npcCiv1', 'assets/NPC/CivilianNPC_01.png');
+        this.load.image('npcCiv1Portrait', 'assets/NPC/CivilianNPCport_01.png');
+        this.load.image('npcCiv2', 'assets/NPC/CivilianNPC_02.png');
+        this.load.image('npcCiv2Portrait', 'assets/NPC/CivilianNPCport_02.png');
     }
     create(){
-        this.cameras.main.setBackgroundColor(0x00ff00);
+        //this.cameras.main.setBackgroundColor(0x00ff00);
+        this.scale.setZoom(0.8);
+
         this.scene.launch('Novice');
         this.scene.launch('Veteran');
+        // this.addFullScreen();
+
+        // this.add.text(500,200, "The Last Extraction").setTint(0xaa00aa).setFontSize(75);
+        // let start = this.add.text(800,500, "Start").setTint(0xaa00aa).setFontSize(75)
+        // .setInteractive();
+        
+        // start.on('pointerdown', () => {
+        //     this.cameras.main.fade(1000, 0,0,0);
+        //     this.time.delayedCall(1000, () => {
+        //         this.scene.launch('Novice');
+        //         this.scene.launch('Veteran');
+        // });
+        // });
+
+        
 
     }
     update(){
         //this.player.update();
+    }
+
+    addFullScreen(){
+        this.input.keyboard.on('keydown-ESC',  () => {
+            // Set the zoom level to 0.8
+            this.scale.setZoom(0.8);
+        }, this);
+        this.add.text(1700,1050, "FULLSCREEN")
+            .setStyle({ fontSize: `30px` })
+            .setInteractive({useHandCursor: true})
+            .on('pointerdown', () => {
+                if (this.scale.isFullscreen) {
+                    this.scale.stopFullscreen();
+                    this.scale.setZoom(0.8);
+                } else {
+                    this.scale.startFullscreen();
+                    this.scale.setZoom(1);
+                }
+        });
     }
 }
 
@@ -34,10 +77,10 @@ class Novice extends Phaser.Scene {
     
     create(){
         // create camera
-        let cam = this.cameras.add(0,0,800,1000);
+        let cam = this.cameras.add(0,0,955,1080);
         //cam.setViewport(800,0,800,1000);
         cam.setBackgroundColor(0x440022);
-        cam.zoom = 1.5;
+        cam.zoom = 1.9;
         // cam.scrollY +=100;
         //this.cameras.main = cam;
         this.cameras.main.setVisible(false);
@@ -58,10 +101,60 @@ class Novice extends Phaser.Scene {
         this.door = this.add.rectangle(900,200,100,100, 0xaaaa00).setOrigin(0,0);
         this.physics.add.existing(this.door);
 
+        // add dialog
+
+        this.diaBox = this.add.image(480,600, 'diaBox')
+        .setOrigin(0.5,0)
+        .setScale(1)
+        .setScrollFactor(0)
+        .setAlpha(1)
+        .setDepth(20);
+
+        this.novicePortrait = this.add.image(310,600, 'novicePortrait')
+        .setOrigin(0,1)
+        .setScale(1.5)
+        .setScrollFactor(0)
+        .setAlpha(0)
+        .setDepth(20);
+
+        this.npcCiv1Portrait = this.add.image(650,600, 'npcCiv1Portrait')
+        .setOrigin(1,1)
+        .setScale(1.5)
+        .setScrollFactor(0)
+        .setAlpha(0)
+        .setDepth(20);
+
+        this.npcCiv2Portrait = this.add.image(650,600, 'npcCiv2Portrait')
+        .setOrigin(1,1)
+        .setScale(1.5)
+        .setScrollFactor(0)
+        .setAlpha(0)
+        .setDepth(20);
+
+        this.diaBoxText = this.add.text(320, 621, "Placeholder, hello and welcome to my code! I didn't expect anyone reading this. I am writing this at 1:17am, 6/4/23", {
+            fontFamily: 'Times New Roman',
+            fontSize: 22,
+            color: '#ffffff',
+            align: "left",
+            wordWrap: { width: 350, useAdvancedWrap: true},
+            lineSpacing: 15,
+        })
+        .setAlpha(1)
+        .setScrollFactor(0)
+        .setScale(1)
+        .setDepth(20);
+
+        // add NPCS
         this.npcs = this.physics.add.staticGroup();
         this.NPCArray = [];
-        this.addNPC(300,100, '...', '0xaaaaee');
-        this.addNPC(600,200, '???', '0xeeaaaa');
+        //this.addNPC(300,100, '...', '0xaaaaee');
+        this.addNPC(600,200, [{self: false, text: 'I don’t understand why they are even complaining. A strike is unnecessary. They enjoy the work. If you ask me, I should be the one to complain.'},
+                                {self: true, text: 'ok.'}], 'npcCiv1', 'civBubble', 
+                                this.novicePortrait, this.npcCiv1Portrait);
+
+        this.addNPC(300,100, [{self: false, text: 'They should put in more effort instead of using the strike as an excuse to get out of work. If they really want to be respected they should work.'}], 
+                                'npcCiv2', 'civBubble', 
+                                this.novicePortrait, this.npcCiv2Portrait);
 
         // add physics
         this.physics.add.collider(this.player, this.walls);
@@ -69,24 +162,22 @@ class Novice extends Phaser.Scene {
         // // Step 4: Listen for 'e' key press event
         this.physics.add.overlap(this.player, this.npcs, (player, npc)=>{
             //console.log('touching');
-
+            
             if (this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E).isDown){
-                //console.log('interact');
-                this.tweens.add({
-                    targets: this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)].text,
-                    alpha: 1,
-                    duration: 500, // Fade-in duration in milliseconds
-                    //delay: 500, // Delay before the fade-in animation starts in milliseconds
-                    hold: 3000, // Text will remain visible for 3 seconds
-                    onComplete: () => {
-                        this.tweens.add({
-                          targets:  this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)].text,
-                          alpha: 0,
-                          duration: 1000,
-                          delay: 0
-                        });
+                let npc222 = this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)];
+                
+                if(npc222.pause)
+                    return;
+                npc222.pause = true;
+
+                if(npc222.convoIndex > 0){
+                    if(npc222.text[npc222.convoIndex - 1].self){ // disable portraits
+                        npc222.self.setAlpha(0);
+                    } else {
+                        npc222.npcPort.setAlpha(0);
                     }
-                  });
+                }
+                this.dialogNext(npc222);
             }
 
         });
@@ -106,13 +197,80 @@ class Novice extends Phaser.Scene {
 
     }
 
-    addNPC(x,y, text, color){
-        let NPC = this.add.rectangle(x,y,100,100, color).setOrigin(0,0);
+    dialogNext(npc222){
+        if(npc222.convoIndex == npc222.text.length){
+            console.log('done');
+            this.diaBox.setAlpha(0);
+            this.diaBoxText.setAlpha(0);
+            npc222.bubble.setAlpha(0);
+            npc222.convoIndex = 0;
+            this.player.canMove = true;
+            this.time.addEvent({
+                delay: 1000,
+                callback: ()=> {npc222.pause = false;},
+                loop: false
+            });
+        } else {
+
+            this.diaBox.setAlpha(1);
+            this.diaBoxText.setAlpha(1);
+            npc222.bubble.setAlpha(1);
+            if(npc222.text[npc222.convoIndex].self){ // enable portraits
+                npc222.self.setAlpha(1);
+            } else {
+                npc222.npcPort.setAlpha(1);
+            }
+            this.player.canMove = false;
+
+            // Split the text into individual words
+            let words = npc222.text[npc222.convoIndex].text.split(" ");
+            this.diaBoxText.text = "";
+            let currentIndex = 0;
+
+            // Start displaying the text one word at a time
+            let event = this.time.addEvent({
+                delay: 100, // Delay between each word (in milliseconds)
+                callback: () => {
+                    // Check if there are more words to display
+                    if (currentIndex < words.length) {
+                        // Get the next word to display
+                        var word = words[currentIndex];
+                
+                        // Increment the current index
+                        currentIndex++;
+                
+                        // Update the text content
+                        this.diaBoxText.text = this.diaBoxText.text + " " + word;
+                    } else {
+                        // All words have been displayed, stop the event
+                        npc222.pause = false;
+                        npc222.convoIndex++;
+
+                        event.remove();
+                    }
+                },
+                callbackScope: this,
+                loop: true
+            });
+        }
+    }
+
+    
+
+    addNPC(x,y, text, image, bubble, selfPort, NPCPort){
+        let NPC = this.add.image(x, y, image).setOrigin(0,0);
         
-        let textObj = this.add.text(x+50, y-50, text, { font: '16px Arial', fill: '#ffffff' }).setOrigin(0.5,1).setAlpha(0);
-        
+        let textObj = this.add.image(x+50, y-30, bubble)
+        .setOrigin(0.5,0)
+        .setScale(2)
+        .setAlpha(0);
+        //this.add.text(x+50, y-50, '...', { font: '16px Arial', fill: '#ffffff' }).setOrigin(0.5,1).setAlpha(0);
+        let textNPC = text;
         this.npcs.add(NPC);
-        this.NPCArray.push({npc: NPC, text: textObj});
+        this.NPCArray.push({npc: NPC, text: textNPC, convoIndex: 0, bubble: textObj, 
+                            pause: false,
+                            self: selfPort,
+                            npcPort: NPCPort});
 
         //console.log(this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == NPC)].text.text);
     }
@@ -149,13 +307,14 @@ class Veteran extends Phaser.Scene {
         
 
         // create camera
-        let cam2 = this.cameras.add(800,0,800,1000);
+        let cam2 = this.cameras.add(960,0,960,1080);
         //cam.setViewport(800,0,800,1000);
         cam2.setBackgroundColor(0x002244);
-        cam2.zoom = 1.5;
+        cam2.zoom = 1.9;
         //this.cameras.main = cam2;
         this.cameras.main.setVisible(false);
-        cam2.setBounds(0, 0, 1600, 1000);
+        cam2.setBounds(0, 0, 1920, 1080);
+        this.addFullScreen();
 
         //create player
         this.player = new VeteranPlayer(this, 500, 300, 'vet');
@@ -257,11 +416,121 @@ class Veteran extends Phaser.Scene {
         //console.log(this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == NPC)].text.text);
     }
 
+    addFullScreen(){
+        this.input.keyboard.on('keydown-ESC',  () => {
+            // Set the zoom level to 0.8
+            this.scale.setZoom(0.8);
+        }, this);
+        this.add.text(750,1050, "FULLSCREEN")
+            .setScrollFactor(0)
+            .setStyle({ fontSize: `30px` })
+            .setInteractive({useHandCursor: true})
+            .on('pointerdown', () => {
+                if (this.scale.isFullscreen) {
+                    this.scale.stopFullscreen();
+                    this.scale.setZoom(0.8);
+                } else {
+                    this.scale.startFullscreen();
+                    this.scale.setZoom(1);
+                }
+        });
+    }
+
 }
 
-class Desert extends Phaser.Scene {
+class DoubleScene extends Phaser.Scene {
+    constructor(key,name) {
+        super(key);
+        this.sceneName = name;
+    }
+    
+    preload(){
+    }
+
+    create(){
+        this.cameras.main.setVisible(false);
+        this.addFullScreen();
+
+        console.log(this.game.gameOptions.noviceLocation);
+        // create player(s)
+        if(this.game.gameOptions.noviceLocation == this.sceneName)
+            this.createNovice();
+
+        if(this.game.gameOptions.veteranLocation == this.sceneName)
+            this.createVeteran();
+
+
+    }
+
+    update(){
+        if(this.player)
+            this.player.update();
+        else if(this.game.gameOptions.noviceLocation == this.sceneName)
+            this.createNovice();
+
+        if(this.player2)
+            this.player2.update();
+        else if(this.game.gameOptions.veteranLocation == this.sceneName)
+            this.createVeteran();
+    }
+
+    createNovice(){
+        // create camera
+        let cam = this.cameras.add(0,0,955,1080);
+        //cam.setViewport(800,0,800,1000);
+        cam.setBackgroundColor(0x440022);
+        cam.zoom = 1.9;
+        // cam.scrollY +=100;
+        //this.cameras.main = cam;
+        this.cameras.main.setVisible(false);
+
+        // create player
+        this.player = new NovicePlayer(this, 100, 300, 'nov');
+        
+        // follow camera
+        cam.startFollow(this.player, true, 0.05, 0.05);
+    }
+    
+    createVeteran(){
+        // create camera
+        let cam2 = this.cameras.add(960,0,960,1080);
+        //cam.setViewport(800,0,800,1000);
+        cam2.setBackgroundColor(0x002244);
+        cam2.zoom = 1.9;
+        //this.cameras.main = cam2;
+        this.cameras.main.setVisible(false);
+
+        //create player
+        this.player2 = new VeteranPlayer(this, 1200, 300, 'vet');
+        
+        // follow camera
+        cam2.startFollow(this.player2, true, 0.05, 0.05);
+    }
+
+    addFullScreen(){
+        this.input.keyboard.on('keydown-ESC',  () => {
+            // Set the zoom level to 0.8
+            this.scale.setZoom(0.8);
+        }, this);
+        this.add.text(1700,1050, "FULLSCREEN")
+            .setStyle({ fontSize: `30px` })
+            .setInteractive({useHandCursor: true})
+            .on('pointerdown', () => {
+                if (this.scale.isFullscreen) {
+                    this.scale.stopFullscreen();
+                    this.scale.setZoom(0.8);
+                } else {
+                    this.scale.startFullscreen();
+                    this.scale.setZoom(1);
+                }
+        });
+    }
+
+}
+
+class Desert extends DoubleScene {
     constructor() {
-        super('Desert');
+        super('Desert', 'desert');
     }
     
     preload(){
@@ -270,17 +539,6 @@ class Desert extends Phaser.Scene {
     }
 
     create(){
-        this.cameras.main.setVisible(false);
-
-        console.log(this.game.gameOptions.noviceLocation);
-        // create player(s)
-        if(this.game.gameOptions.noviceLocation == 'desert')
-            this.createNovice();
-
-        if(this.game.gameOptions.veteranLocation == 'desert')
-            this.createVeteran();
-
-
         // create map
         let map = this.make.tilemap({ key: 'roadmap', tileWidth: 100, tileHeight: 100 });
         let tileset = map.addTilesetImage('tiles', null, 100,100);
@@ -298,58 +556,13 @@ class Desert extends Phaser.Scene {
 
     }
 
-    createNovice(){
-        // create camera
-        let cam = this.cameras.add(0,0,800,1000);
-        //cam.setViewport(800,0,800,1000);
-        cam.setBackgroundColor(0x440022);
-        cam.zoom = 1.5;
-        // cam.scrollY +=100;
-        //this.cameras.main = cam;
-        this.cameras.main.setVisible(false);
-
-        // create player
-        this.player = new NovicePlayer(this, 100, 300, 'nov');
-        
-        // follow camera
-        cam.startFollow(this.player, true, 0.05, 0.05);
-    }
-    
-    createVeteran(){
-        // create camera
-        let cam2 = this.cameras.add(800,0,800,1000);
-        //cam.setViewport(800,0,800,1000);
-        cam2.setBackgroundColor(0x002244);
-        cam2.zoom = 1.5;
-        //this.cameras.main = cam2;
-        this.cameras.main.setVisible(false);
-
-        //create player
-        this.player2 = new VeteranPlayer(this, 1200, 300, 'vet');
-        
-        // follow camera
-        cam2.startFollow(this.player2, true, 0.05, 0.05);
-    }
-
-    update(){
-        if(this.player)
-            this.player.update();
-        else if(this.game.gameOptions.noviceLocation == 'desert')
-            this.createNovice();
-
-        if(this.player2)
-            this.player2.update();
-        else if(this.game.gameOptions.veteranLocation == 'desert')
-            this.createVeteran();
-    }
-
 }
 
 
 let config = {
     type: Phaser.WEBGL,
-    width: 1600,
-    height: 1000,
+    width: 1920,
+    height: 1080,
     backgroundColor: 0x000000,
     physics: {
         default: 'arcade',
