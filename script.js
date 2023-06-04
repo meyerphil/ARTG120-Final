@@ -13,6 +13,8 @@ class Start extends Phaser.Scene {
         this.load.spritesheet('nov', 'assets/Player/Novice_Sheet_02.png', { frameWidth: 50, frameHeight: 76});
         this.load.image('noviceHouse', 'assets/oasishouse-3.png');
         this.load.image('veteranHouse', 'assets/deserthouse-3.png');
+
+        // dialog and NPCs
         this.load.image('diaBox', 'assets/UIAssets/Text_Box.png');
         this.load.image('civBubble', 'assets/UIAssets/Blurb_Civilians.png');
         this.load.image('novicePortrait', 'assets/Player/NoviceMCport.png');
@@ -20,6 +22,13 @@ class Start extends Phaser.Scene {
         this.load.image('npcCiv1Portrait', 'assets/NPC/CivilianNPCport_01.png');
         this.load.image('npcCiv2', 'assets/NPC/CivilianNPC_02.png');
         this.load.image('npcCiv2Portrait', 'assets/NPC/CivilianNPCport_02.png');
+
+        this.load.image('memBubble', 'assets/UIAssets/Blurb_Members.png');
+        this.load.image('veteranPortrait', 'assets/Player/VeteranMCport.png');
+        this.load.image('npcVet1', 'assets/NPC/LizardNPC_01.png');
+        this.load.image('npcVet1Portrait', 'assets/NPC/LizardNPC_Por_01.png');
+        this.load.image('npcVet2', 'assets/NPC/MuleNPC_02.png');
+        this.load.image('npcVet2Portrait', 'assets/NPC/MuleNPCPor_03.png');
     }
     create(){
         //this.cameras.main.setBackgroundColor(0x00ff00);
@@ -554,8 +563,17 @@ class DoubleScene extends Phaser.Scene {
         this.cameras.main.setVisible(false);
         this.addFullScreen();
 
-        //create player
-        this.player2 = new VeteranPlayer(this, 1200, 300, 'vet');
+        
+        // create player
+        if(this.p2Cords) {
+            this.player2 = new VeteranPlayer(this, this.p2Cords[0], this.p2Cords[1], 'vet');
+        } else {
+            this.player2 = new VeteranPlayer(this, 1200, 300, 'vet');
+        }
+        // add dialog
+        //this.initDialogVeteran();
+
+        this.veteranInteractionNPC();
         
         // follow camera
         this.cam2.startFollow(this.player2, true, 0.05, 0.05);
@@ -606,7 +624,7 @@ class DoubleScene extends Phaser.Scene {
         .setOrigin(0.5,0)
         .setScale(1)
         .setScrollFactor(0)
-        .setAlpha(1)
+        .setAlpha(0)
         .setDepth(20);
         this.cam2IgnoreList.push(this.diaBox);
 
@@ -634,6 +652,25 @@ class DoubleScene extends Phaser.Scene {
         .setDepth(20);
         this.cam2IgnoreList.push(this.npcCiv2Portrait);
 
+        this.npcVet1Portrait = this.add.image(650,600, 'npcVet1Portrait')
+        .setOrigin(1,1)
+        .setScale(1.5)
+        .setScrollFactor(0)
+        .setAlpha(0)
+        .setDepth(20);
+        this.cam2IgnoreList.push(this.npcVet1Portrait);
+        
+
+        this.npcVet2Portrait = this.add.image(650,600, 'npcVet2Portrait')
+        .setOrigin(1,1)
+        .setScale(1.5)
+        .setScrollFactor(0)
+        .setAlpha(0)
+        .setDepth(20);
+        this.cam2IgnoreList.push(this.npcVet2Portrait);
+
+        
+
         this.diaBoxText = this.add.text(320, 621, "Placeholder, hello and welcome to my code! I didn't expect anyone reading this. I am writing this at 1:17am, 6/4/23", {
             fontFamily: 'Century Gothic',
             fontSize: 22,
@@ -642,12 +679,80 @@ class DoubleScene extends Phaser.Scene {
             wordWrap: { width: 350, useAdvancedWrap: true},
             lineSpacing: 15,
         })
-        .setAlpha(1)
+        .setAlpha(0)
         .setScrollFactor(0)
         .setScale(1)
         .setDepth(20);
 
         this.cam2IgnoreList.push(this.diaBoxText);
+    }
+
+    initDialogVeteran(){
+        this.diaBox2 = this.add.image(480,600, 'diaBox')
+        .setOrigin(0.5,0)
+        .setScale(1)
+        .setScrollFactor(0)
+        .setAlpha(0)
+        .setDepth(20);
+        this.camIgnoreList.push(this.diaBox2);
+
+        this.veteranPortrait = this.add.image(310,600, 'veteranPortrait')
+        .setOrigin(0,1)
+        .setScale(1.5)
+        .setScrollFactor(0)
+        .setAlpha(0)
+        .setDepth(20);
+        this.camIgnoreList.push(this.veteranPortrait);
+
+        this.npcCiv1Portrait2 = this.add.image(650,600, 'npcCiv1Portrait')
+        .setOrigin(1,1)
+        .setScale(1.5)
+        .setScrollFactor(0)
+        .setAlpha(0)
+        .setDepth(20);
+        this.camIgnoreList.push(this.npcCiv1Portrait2);
+
+        this.npcCiv2Portrait2 = this.add.image(650,600, 'npcCiv2Portrait')
+        .setOrigin(1,1)
+        .setScale(1.5)
+        .setScrollFactor(0)
+        .setAlpha(0)
+        .setDepth(20);
+        this.camIgnoreList.push(this.npcCiv2Portrait2);
+
+        this.npcVet1Portrait2 = this.add.image(650,600, 'npcVet1Portrait')
+        .setOrigin(1,1)
+        .setScale(1.5)
+        .setScrollFactor(0)
+        .setAlpha(0)
+        .setDepth(20);
+        this.camIgnoreList.push(this.npcVet1Portrait2);
+        
+
+        this.npcVet2Portrait2 = this.add.image(650,600, 'npcVet2Portrait')
+        .setOrigin(1,1)
+        .setScale(1.5)
+        .setScrollFactor(0)
+        .setAlpha(0)
+        .setDepth(20);
+        this.camIgnoreList.push(this.npcVet2Portrait2);
+        
+
+        this.diaBoxText2 = this.add.text(320, 621, "Placeholder, hello and welcome to my code! I didn't expect anyone reading this. I am writing this at 1:17am, 6/4/23", {
+            fontFamily: 'Century Gothic',
+            fontSize: 22,
+            color: '#ffffff',
+            align: "left",
+            wordWrap: { width: 350, useAdvancedWrap: true},
+            lineSpacing: 15,
+        })
+        .setAlpha(0)
+        .setScrollFactor(0)
+        .setScale(1)
+        .setDepth(20);
+        this.camIgnoreList.push(this.diaBoxText2);
+
+        
     }
 
     noviceInteractionNPC(){
@@ -664,30 +769,61 @@ class DoubleScene extends Phaser.Scene {
                 let npc222 = this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)];
                 //console.log(npc222);
                 
-                if(npc222.pause)
+                if(npc222.pause || npc222.convoIndexVet > 0 || npc222.textNovice == null)
                     return;
                 npc222.pause = true;
 
-                if(npc222.convoIndex > 0){
-                    if(npc222.text[npc222.convoIndex - 1].self){ // disable portraits
-                        npc222.self.setAlpha(0);
+                if(npc222.convoIndexNov > 0){
+                    if(npc222.textNovice[npc222.convoIndexNov - 1].self){ // disable portraits
+                        npc222.novPort.self.setAlpha(0);
                     } else {
-                        npc222.npcPort.setAlpha(0);
+                        npc222.novPort.npc.setAlpha(0);
                     }
                 }
-                this.dialogNext(npc222);
+                this.dialogNextNovice(npc222);
             }
 
         });
     }
 
-    dialogNext(npc222){
-        if(npc222.convoIndex == npc222.text.length){
+    veteranInteractionNPC(){
+        // Listen for 'm' key press event
+        this.physics.add.overlap(this.player2, this.npcs, (player, npc)=>{
+            //console.log('touching');
+            if (this.player2.y < npc.y + 50) {
+                this.player2.setDepth(0);  // Render player underneath the tiles
+            } else {
+                this.player2.setDepth(10);  // Render player above the tiles
+            }
+
+            if (this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M).isDown){
+                let npc222 = this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)];
+                //console.log(npc222);
+                
+                if(npc222.pause || npc222.convoIndexNov > 0 || npc222.textVeteran == null)
+                    return;
+                npc222.pause = true;
+
+                if(npc222.convoIndexVet > 0){
+                    if(npc222.textVeteran[npc222.convoIndexVet - 1].self){ // disable portraits
+                        npc222.vetPort.self.setAlpha(0);
+                    } else {
+                        npc222.vetPort.npc.setAlpha(0);
+                    }
+                }
+                this.dialogNextVeteran(npc222);
+            }
+
+        });
+    }
+
+    dialogNextNovice(npc222){
+        if(npc222.convoIndexNov == npc222.textNovice.length){
             console.log('done');
             this.diaBox.setAlpha(0);
             this.diaBoxText.setAlpha(0);
             npc222.bubble.setAlpha(0);
-            npc222.convoIndex = 0;
+            npc222.convoIndexNov = 0;
             this.player.canMove = true;
             this.time.addEvent({
                 delay: 1000,
@@ -699,15 +835,15 @@ class DoubleScene extends Phaser.Scene {
             this.diaBox.setAlpha(1);
             this.diaBoxText.setAlpha(1);
             npc222.bubble.setAlpha(1);
-            if(npc222.text[npc222.convoIndex].self){ // enable portraits
-                npc222.self.setAlpha(1);
+            if(npc222.textNovice[npc222.convoIndexNov].self){ // enable portraits
+                npc222.novPort.self.setAlpha(1);
             } else {
-                npc222.npcPort.setAlpha(1);
+                npc222.novPort.npc.setAlpha(1);
             }
             this.player.canMove = false;
 
             // Split the text into individual words
-            let words = npc222.text[npc222.convoIndex].text.split(" ");
+            let words = npc222.textNovice[npc222.convoIndexNov].text.split(" ");
             this.diaBoxText.text = "";
             let currentIndex = 0;
 
@@ -728,7 +864,65 @@ class DoubleScene extends Phaser.Scene {
                     } else {
                         // All words have been displayed, stop the event
                         npc222.pause = false;
-                        npc222.convoIndex++;
+                        npc222.convoIndexNov++;
+
+                        event.remove();
+                    }
+                },
+                callbackScope: this,
+                loop: true
+            });
+        }
+    }
+
+    dialogNextVeteran(npc222){
+        if(npc222.convoIndexVet == npc222.textVeteran.length){
+            console.log('done');
+            this.diaBox2.setAlpha(0);
+            this.diaBoxText2.setAlpha(0);
+            npc222.bubble.setAlpha(0);
+            npc222.convoIndexVet = 0;
+            this.player2.canMove = true;
+            this.time.addEvent({
+                delay: 1000,
+                callback: ()=> {npc222.pause = false;},
+                loop: false
+            });
+        } else {
+
+            this.diaBox2.setAlpha(1);
+            this.diaBoxText2.setAlpha(1);
+            npc222.bubble.setAlpha(1);
+            if(npc222.textVeteran[npc222.convoIndexVet].self){ // enable portraits
+                npc222.vetPort.self.setAlpha(1);
+            } else {
+                npc222.vetPort.npc.setAlpha(1);
+            }
+            this.player2.canMove = false;
+
+            // Split the text into individual words
+            let words = npc222.textVeteran[npc222.convoIndexVet].text.split(" ");
+            this.diaBoxText2.text = "";
+            let currentIndex = 0;
+
+            // Start displaying the text one word at a time
+            let event = this.time.addEvent({
+                delay: 100, // Delay between each word (in milliseconds)
+                callback: () => {
+                    // Check if there are more words to display
+                    if (currentIndex < words.length) {
+                        // Get the next word to display
+                        var word = words[currentIndex];
+                
+                        // Increment the current index
+                        currentIndex++;
+                
+                        // Update the text content
+                        this.diaBoxText2.text = this.diaBoxText2.text + " " + word;
+                    } else {
+                        // All words have been displayed, stop the event
+                        npc222.pause = false;
+                        npc222.convoIndexVet++;
 
                         event.remove();
                     }
@@ -741,7 +935,7 @@ class DoubleScene extends Phaser.Scene {
 
     
 
-    addNPC(x,y, text, image, bubble, selfPort, NPCPort){
+    addNPC(x,y, textNov, textVet, image, bubble, PortNov, PortVet){
         let NPC;
         if(image)
             NPC = this.add.image(x, y, image).setOrigin(0,0).setDepth(7);
@@ -754,12 +948,13 @@ class DoubleScene extends Phaser.Scene {
         .setAlpha(0)
         .setDepth(7);
         //this.add.text(x+50, y-50, '...', { font: '16px Arial', fill: '#ffffff' }).setOrigin(0.5,1).setAlpha(0);
-        let textNPC = text;
+
         this.npcs.add(NPC);
-        this.NPCArray.push({npc: NPC, text: textNPC, convoIndex: 0, bubble: textObj, 
+        this.NPCArray.push({npc: NPC, textNovice: textNov, textVeteran: textVet, convoIndexNov: 0, convoIndexVet: 0,
+                            bubble: textObj, 
                             pause: false,
-                            self: selfPort,
-                            npcPort: NPCPort});
+                            novPort: PortNov,
+                            vetPort: PortVet});
 
         //console.log(this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == NPC)].text.text);
     }
@@ -806,14 +1001,15 @@ class NoviceHouse extends DoubleScene {
         //book
         super.addNPC(600,300, [{self: true, text: 'The textbook is opened to a page about the purple rocks used to power everything within the city.'},
                                 {self: true, text: 'Its pure unrefined form is only found above the surface.'}],
+                                null,
                                 null, 'civBubble', 
-                                this.novicePortrait, this.npcCiv1Portrait);
+                                {self: this.novicePortrait}, null);
 
         //rocks
         super.addNPC(200,100, [{self: true, text: 'A collection of gems I’ve earned. There is a spot open for my next gem.'}],
+                                null,
                                 null, 'civBubble', 
-                                this.novicePortrait, this.npcCiv1Portrait);
-        
+                                {self: this.novicePortrait}, null);
 
     }
 
@@ -886,13 +1082,33 @@ class Desert extends DoubleScene {
         super.initDialogNovice();
         super.addNPC(500,300, [{self: false, text: 'I don’t understand why they are even complaining. A strike is unnecessary.'},
                                 {self: false, text: 'They enjoy the work. If you ask me, I should be the one to complain.'},
-                                {self: true, text: 'ok.'}], null, 'civBubble', 
-                                this.novicePortrait, this.npcCiv1Portrait);
+                                {self: true, text: 'ok.'}], 
+                                null,
+                                null, 'civBubble', 
+                                {self: this.novicePortrait, npc: this.npcCiv1Portrait}, null);
 
         super.addNPC(300,600, [{self: false, text: 'They should put in more effort instead of using the strike as an excuse to get out of work.'}, 
                                 {self: false, text: 'If they really want to be respected they should work.'}],
+                                null,
                                 'npcCiv2', 'civBubble', 
-                                this.novicePortrait, this.npcCiv2Portrait);
+                                {self: this.novicePortrait, npc: this.npcCiv2Portrait}, null);
+
+        super.initDialogVeteran();
+
+        super.addNPC(1000,300, [{self: false, text: 'Ello mate'}, 
+                                {self: true, text: 'oi.'}],
+                                [{self: false, text: 'jimbo went on strike for milk'}, 
+                                {self: true, text: 'what haponm.'}],
+                                'npcVet2', 'memBubble', 
+                                {self: this.novicePortrait, npc: this.npcVet2Portrait}, {self: this.veteranPortrait, npc: this.npcVet2Portrait2});
+
+        super.addNPC(1500,400, [{self: false, text: 'Who tf are you'}, 
+                                {self: true, text: 'idk bruh.'}],
+
+                                [{self: false, text: 'cactus Fred hit me :('}, 
+                                {self: true, text: 'Prickly pear beware amigo.'}],
+                                'npcVet1', 'memBubble', 
+                                {self: this.novicePortrait, npc: this.npcVet1Portrait}, {self: this.veteranPortrait, npc: this.npcVet1Portrait2});
         
 
     }

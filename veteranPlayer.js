@@ -19,6 +19,7 @@ export default class VeteranPlayer extends Phaser.Physics.Arcade.Sprite {
         this.health = [];
         this.maxHealth = 3;
         this.moveSpeed = 150;
+        this.canMove = true;
         
         // create animations
         this.anims.create({
@@ -54,34 +55,46 @@ export default class VeteranPlayer extends Phaser.Physics.Arcade.Sprite {
     update() {
 
         // horizontal
+        if(this.canMove){
+            if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT).isDown)
+            {
+                this.setVelocityX(-this.moveSpeed);
+                this.anims.play('left', true);
+                this.setVelocityY(0);
+            }
+            else if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT).isDown)
+            {
+                this.setVelocityX(this.moveSpeed);
+                this.anims.play('right', true);
+                this.setVelocityY(0);
+            }
+            else
+            // vertical movement
 
-        if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT).isDown)
-        {
-            this.setVelocityX(-this.moveSpeed);
-            this.anims.play('left', true);
-            this.setVelocityY(0);
-        }
-        else if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT).isDown)
-        {
-            this.setVelocityX(this.moveSpeed);
-            this.anims.play('right', true);
-            this.setVelocityY(0);
-        }
-        else
-        // vertical movement
+            if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP).isDown)
+            {
+                this.setVelocityY(-this.moveSpeed);
+                this.anims.play('up', true);
+                this.setVelocityX(0);
+            }
+            else if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN).isDown)
+            {
+                this.setVelocityY(this.moveSpeed);
+                this.anims.play('down', true);
+                this.setVelocityX(0);
+            }
+            else
+            {
+                this.setVelocityY(0);
+                this.setVelocityX(0);
 
-        if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP).isDown)
-        {
-            this.setVelocityY(-this.moveSpeed);
-            this.anims.play('up', true);
-            this.setVelocityX(0);
-        }
-        else if (this.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN).isDown)
-        {
-            this.setVelocityY(this.moveSpeed);
-            this.anims.play('down', true);
-            this.setVelocityX(0);
-        }
+                    let first = this.anims.currentAnim;
+                    if(first)
+                        this.setFrame(first.frames[0].textureFrame);
+                        this.anims.stop();
+
+            }
+        } 
         else
         {
             this.setVelocityY(0);
