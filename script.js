@@ -309,7 +309,7 @@ class Veteran extends Phaser.Scene {
         
 
         // create camera
-        let cam2 = this.cameras.add(960,0,960,1080);
+        let cam2 = this.cameras.add(965,0,960,1080);
         //cam.setViewport(800,0,800,1000);
         cam2.setBackgroundColor(0x002244);
         cam2.zoom = 1.9;
@@ -482,6 +482,7 @@ class DoubleScene extends Phaser.Scene {
         //cam.setViewport(800,0,800,1000);
         cam.setBackgroundColor(0x440022);
         cam.zoom = 1.9;
+        cam.setBounds(0, 0, 1900, 1000);
         // cam.scrollY +=100;
         //this.cameras.main = cam;
         this.cameras.main.setVisible(false);
@@ -491,14 +492,29 @@ class DoubleScene extends Phaser.Scene {
         
         // follow camera
         cam.startFollow(this.player, true, 0.05, 0.05);
+
+        // overlap with players
+        if(this.player2){
+            this.physics.add.overlap(this.player, this.player2, () => {
+                console.log('player2 ' + this.player2.y + " player " + this.player.y );
+                if (this.player2.y < this.player.y ) {
+                    this.player2.setDepth(10);
+                    this.player.setDepth(20);
+                } else {
+                    this.player2.setDepth(20);  
+                    this.player.setDepth(10);  
+                }
+            });
+        }
     }
     
     createVeteran(){
         // create camera
-        let cam2 = this.cameras.add(960,0,960,1080);
+        let cam2 = this.cameras.add(965,0,960,1080);
         //cam.setViewport(800,0,800,1000);
         cam2.setBackgroundColor(0x002244);
         cam2.zoom = 1.9;
+        cam2.setBounds(0, 0, 1900, 1000);
         //this.cameras.main = cam2;
         this.cameras.main.setVisible(false);
 
@@ -507,6 +523,22 @@ class DoubleScene extends Phaser.Scene {
         
         // follow camera
         cam2.startFollow(this.player2, true, 0.05, 0.05);
+
+
+        // overlap with players
+        if(this.player){
+            this.physics.add.overlap(this.player, this.player2, () => {
+                console.log('player2 ' + this.player2.y + " player " + this.player.y );
+                if (this.player2.y < this.player.y ) {
+                    this.player2.setDepth(10);  
+                    this.player.setDepth(20); 
+                } else {
+                    this.player2.setDepth(20);  
+                    this.player.setDepth(10);  
+                }
+            });
+        }
+
     }
 
     addFullScreen(){
@@ -536,26 +568,66 @@ class Desert extends DoubleScene {
     }
     
     preload(){
-        this.load.image('tiles', 'assets/bridgeMap.png');
-        this.load.tilemapCSV('roadmap', 'assets/bridge.csv');
+        this.load.image('desertTiles', 'assets/desert/bridgeMap.png');
+        this.load.tilemapCSV('desert-ground', 'assets/desert/desert_ground.csv');
+        this.load.tilemapCSV('desert-objects', 'assets/desert/desert_objects.csv');
     }
 
     create(){
         // create map
-        let map = this.make.tilemap({ key: 'roadmap', tileWidth: 100, tileHeight: 100 });
-        let tileset = map.addTilesetImage('tiles', null, 100,100);
+        let map = this.make.tilemap({ key: 'desert-ground', tileWidth: 100, tileHeight: 100 });
+        let tileset = map.addTilesetImage('desertTiles', null, 100,100);
         let layer = map.createLayer(0, tileset, 0, 0);
 
-        // create world
-        // this.walls = this.physics.add.staticGroup();
-        // let square = this.add.image(600,100, 'veteranHouse').setOrigin(0,0).setScale(3);
-        // let wall = this.add.rectangle(50,500,500,100, 0xaa0000).setOrigin(0,0);
-        // this.walls.add(wall);
-        // this.walls.add(square);
+        let map2 = this.make.tilemap({ key: 'desert-objects', tileWidth: 100, tileHeight: 100 });
+        let houseTileset = map2.addTilesetImage('desertTiles', null, 100,100);
+        this.layer2 = map2.createLayer(0, houseTileset, 0, 0);
+
 
         // add physics
-        //this.physics.add.collider(this.player, this.walls);
+        // Enable collision for specific tiles
+        this.layer2.setCollisionByExclusion([-1]);
+        this.layer2.setDepth(5);
 
+        this.p1Init = false;
+        this.p2Init = false;
+
+    }
+
+    update(){
+
+        super.update();
+
+        if(this.player && !this.p1Init){
+            this.p1Init = true;
+
+            this.player.body.setSize(20,20);
+            this.physics.add.collider(this.player, this.layer2, (player, tile) => {
+                console.log('player' + this.player.y + " tile " + tile.y * 100);
+                if (this.player.y < tile.y * 100) {
+                    this.player.setDepth(0);  // Render player underneath the tiles
+                } else {
+                    this.player.setDepth(10);  // Render player above the tiles
+                }
+            });
+
+        }
+
+        if(this.player2 && !this.p2Init){
+            this.p2Init = true;
+
+            this.player2.body.setSize(20,20);
+            this.physics.add.collider(this.player2, this.layer2, (player, tile) => {
+                console.log('player' + this.player2.y + " tile " + tile.y * 100);
+                if (this.player2.y < tile.y * 100) {
+                    this.player2.setDepth(0);  // Render player underneath the tiles
+                } else {
+                    this.player2.setDepth(10);  // Render player above the tiles
+                }
+            });
+
+        }
+        
     }
 
 }
