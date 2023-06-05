@@ -17,7 +17,7 @@ export default class NovicePlayer extends Phaser.Physics.Arcade.Sprite {
         // create health
         this.health = [];
         this.maxHealth = 3;
-        this.moveSpeed = 500;
+        this.moveSpeed = 200;
         this.canMove = true;
 
         // create animations

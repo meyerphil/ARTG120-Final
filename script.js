@@ -31,24 +31,24 @@ class Start extends Phaser.Scene {
         this.load.image('npcVet2Portrait', 'assets/NPC/MuleNPCPor_03.png');
     }
     create(){
-        //this.cameras.main.setBackgroundColor(0x00ff00);
+        // //this.cameras.main.setBackgroundColor(0x00ff00);
         this.scale.setZoom(0.8);
 
-        this.scene.launch('NoviceHouse');
-        this.scene.launch('UndergroundMine');
-        // this.addFullScreen();
+        // this.scene.launch('NoviceHouse');
+        // this.scene.launch('UndergroundMine');
+        this.addFullScreen();
 
-        // this.add.text(500,200, "The Last Extraction").setTint(0xaa00aa).setFontSize(75);
-        // let start = this.add.text(800,500, "Start").setTint(0xaa00aa).setFontSize(75)
-        // .setInteractive();
+        this.add.text(500,200, "The Last Extraction").setTint(0xaa00aa).setFontSize(75);
+        let start = this.add.text(800,500, "Start").setTint(0xaa00aa).setFontSize(75)
+        .setInteractive();
         
-        // start.on('pointerdown', () => {
-        //     this.cameras.main.fade(1000, 0,0,0);
-        //     this.time.delayedCall(1000, () => {
-        //         this.scene.launch('Novice');
-        //         this.scene.launch('Veteran');
-        // });
-        // });
+        start.on('pointerdown', () => {
+            this.cameras.main.fade(1000, 0,0,0);
+            this.time.delayedCall(1000, () => {
+                this.scene.launch('NoviceHouse');
+                this.scene.launch('UndergroundMine');
+        });
+        });
 
         
 
@@ -62,7 +62,7 @@ class Start extends Phaser.Scene {
             // Set the zoom level to 0.8
             this.scale.setZoom(0.8);
         }, this);
-        this.add.text(1700,1050, "FULLSCREEN")
+        this.fsText = this.add.text(1700,1050, "FULLSCREEN")
             .setStyle({ fontSize: `30px` })
             .setInteractive({useHandCursor: true})
             .on('pointerdown', () => {
@@ -78,384 +78,6 @@ class Start extends Phaser.Scene {
 }
 
 
-// Scene 1 class
-// class Novice extends Phaser.Scene {
-//     constructor() {
-//       super('Novice');
-//     }
-    
-//     create(){
-//         // create camera
-//         let cam = this.cameras.add(0,0,955,1080);
-//         //cam.setViewport(800,0,800,1000);
-//         cam.setBackgroundColor(0x440022);
-//         cam.zoom = 1.9;
-//         // cam.scrollY +=100;
-//         //this.cameras.main = cam;
-//         this.cameras.main.setVisible(false);
-
-//         // create player
-//         this.player = new NovicePlayer(this, 500, 300, 'nov');
-
-//         // follow camera
-//         cam.startFollow(this.player, true, 0.05, 0.05);
-        
-//         // create world
-//         this.walls = this.physics.add.staticGroup();
-//         let square = this.add.image(200,250, 'noviceHouse').setOrigin(0,0).setScale(3);
-//         let wall = this.add.rectangle(50,500,1600,100, 0x0000aa).setOrigin(0,0);
-//         this.walls.add(wall);
-//         this.walls.add(square);
-
-//         this.door = this.add.rectangle(900,200,100,100, 0xaaaa00).setOrigin(0,0);
-//         this.physics.add.existing(this.door);
-
-//         // add dialog
-
-//         this.initDialog();
-
-//         // add NPCS
-//         this.npcs = this.physics.add.staticGroup();
-//         this.NPCArray = [];
-//         //this.addNPC(300,100, '...', '0xaaaaee');
-//         this.addNPC(600,200, [{self: false, text: 'I don’t understand why they are even complaining. A strike is unnecessary.'},
-//                                 {self: false, text: 'They enjoy the work. If you ask me, I should be the one to complain.'},
-//                                 {self: true, text: 'ok.'}], 'npcCiv1', 'civBubble', 
-//                                 this.novicePortrait, this.npcCiv1Portrait);
-
-//         this.addNPC(300,100, [{self: false, text: 'They should put in more effort instead of using the strike as an excuse to get out of work.'}, 
-//                                 {self: false, text: 'If they really want to be respected they should work.'}],
-//                                 'npcCiv2', 'civBubble', 
-//                                 this.novicePortrait, this.npcCiv2Portrait);
-
-//         // add physics
-//         this.physics.add.collider(this.player, this.walls);
-
-//         this.noviceInteractionNPC();
-
-//         this.physics.add.collider(this.player, this.door, ()=>{
-//             this.game.gameOptions.noviceLocation = 'desert';
-//             console.log('to desert!');
-//             this.scene.stop();
-//             if(this.scene.isActive('Desert'))
-//                 this.scene.resume('Desert');
-//             else
-//                 this.scene.launch('Desert');
-
-//         });
-
-//         //console.log(this.NPCArray);
-
-//     }
-
-//     noviceInteractionNPC(){
-//         // // Step 4: Listen for 'e' key press event
-//         this.physics.add.overlap(this.player, this.npcs, (player, npc)=>{
-//             //console.log('touching');
-            
-//             if (this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E).isDown){
-//                 let npc222 = this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)];
-                
-//                 if(npc222.pause)
-//                     return;
-//                 npc222.pause = true;
-
-//                 if(npc222.convoIndex > 0){
-//                     if(npc222.text[npc222.convoIndex - 1].self){ // disable portraits
-//                         npc222.self.setAlpha(0);
-//                     } else {
-//                         npc222.npcPort.setAlpha(0);
-//                     }
-//                 }
-//                 this.dialogNext(npc222);
-//             }
-
-//         });
-//     }
-
-//     initDialog(){
-//         this.diaBox = this.add.image(480,600, 'diaBox')
-//         .setOrigin(0.5,0)
-//         .setScale(1)
-//         .setScrollFactor(0)
-//         .setAlpha(1)
-//         .setDepth(20);
-
-//         this.novicePortrait = this.add.image(310,600, 'novicePortrait')
-//         .setOrigin(0,1)
-//         .setScale(1.5)
-//         .setScrollFactor(0)
-//         .setAlpha(0)
-//         .setDepth(20);
-
-//         this.npcCiv1Portrait = this.add.image(650,600, 'npcCiv1Portrait')
-//         .setOrigin(1,1)
-//         .setScale(1.5)
-//         .setScrollFactor(0)
-//         .setAlpha(0)
-//         .setDepth(20);
-
-//         this.npcCiv2Portrait = this.add.image(650,600, 'npcCiv2Portrait')
-//         .setOrigin(1,1)
-//         .setScale(1.5)
-//         .setScrollFactor(0)
-//         .setAlpha(0)
-//         .setDepth(20);
-
-//         this.diaBoxText = this.add.text(320, 621, "Placeholder, hello and welcome to my code! I didn't expect anyone reading this. I am writing this at 1:17am, 6/4/23", {
-//             fontFamily: 'Century Gothic',
-//             fontSize: 22,
-//             color: '#ffffff',
-//             align: "left",
-//             wordWrap: { width: 350, useAdvancedWrap: true},
-//             lineSpacing: 15,
-//         })
-//         .setAlpha(1)
-//         .setScrollFactor(0)
-//         .setScale(1)
-//         .setDepth(20);
-//     }
-
-//     dialogNext(npc222){
-//         if(npc222.convoIndex == npc222.text.length){
-//             console.log('done');
-//             this.diaBox.setAlpha(0);
-//             this.diaBoxText.setAlpha(0);
-//             npc222.bubble.setAlpha(0);
-//             npc222.convoIndex = 0;
-//             this.player.canMove = true;
-//             this.time.addEvent({
-//                 delay: 1000,
-//                 callback: ()=> {npc222.pause = false;},
-//                 loop: false
-//             });
-//         } else {
-
-//             this.diaBox.setAlpha(1);
-//             this.diaBoxText.setAlpha(1);
-//             npc222.bubble.setAlpha(1);
-//             if(npc222.text[npc222.convoIndex].self){ // enable portraits
-//                 npc222.self.setAlpha(1);
-//             } else {
-//                 npc222.npcPort.setAlpha(1);
-//             }
-//             this.player.canMove = false;
-
-//             // Split the text into individual words
-//             let words = npc222.text[npc222.convoIndex].text.split(" ");
-//             this.diaBoxText.text = "";
-//             let currentIndex = 0;
-
-//             // Start displaying the text one word at a time
-//             let event = this.time.addEvent({
-//                 delay: 100, // Delay between each word (in milliseconds)
-//                 callback: () => {
-//                     // Check if there are more words to display
-//                     if (currentIndex < words.length) {
-//                         // Get the next word to display
-//                         var word = words[currentIndex];
-                
-//                         // Increment the current index
-//                         currentIndex++;
-                
-//                         // Update the text content
-//                         this.diaBoxText.text = this.diaBoxText.text + " " + word;
-//                     } else {
-//                         // All words have been displayed, stop the event
-//                         npc222.pause = false;
-//                         npc222.convoIndex++;
-
-//                         event.remove();
-//                     }
-//                 },
-//                 callbackScope: this,
-//                 loop: true
-//             });
-//         }
-//     }
-
-    
-
-//     addNPC(x,y, text, image, bubble, selfPort, NPCPort){
-//         let NPC = this.add.image(x, y, image).setOrigin(0,0);
-        
-//         let textObj = this.add.image(x+50, y-30, bubble)
-//         .setOrigin(0.5,0)
-//         .setScale(2)
-//         .setAlpha(0);
-//         //this.add.text(x+50, y-50, '...', { font: '16px Arial', fill: '#ffffff' }).setOrigin(0.5,1).setAlpha(0);
-//         let textNPC = text;
-//         this.npcs.add(NPC);
-//         this.NPCArray.push({npc: NPC, text: textNPC, convoIndex: 0, bubble: textObj, 
-//                             pause: false,
-//                             self: selfPort,
-//                             npcPort: NPCPort});
-
-//         //console.log(this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == NPC)].text.text);
-//     }
-
-//     update(){
-//         this.player.update();
-//     }
-
-// }
-
-// class Veteran extends Phaser.Scene {
-//     constructor() {
-//         super('Veteran');
-//     }
-
-//     preload(){
-//         this.load.image('tiles', 'assets/lower/bridgeMap.png');
-//         this.load.tilemapCSV('map', 'assets/lower/ground.csv');
-
-//         this.load.image('houseTiles', 'assets/lower/houses.png');
-//         this.load.tilemapCSV('houseMap', 'assets/lower/house.csv');
-//     }
-
-//     create(){
-
-//         // create map
-//         let map = this.make.tilemap({ key: 'map', tileWidth: 100, tileHeight: 100 });
-//         let tileset = map.addTilesetImage('tiles', null, 100,100);
-//         let layer = map.createLayer(0, tileset, 0, 0);
-
-//         let map2 = this.make.tilemap({ key: 'houseMap', tileWidth: 100, tileHeight: 100 });
-//         let houseTileset = map2.addTilesetImage('houseTiles', null, 100,100);
-//         let layer2 = map2.createLayer(0, houseTileset, 0, 0);
-        
-
-//         // create camera
-//         let cam2 = this.cameras.add(965,0,960,1080);
-//         //cam.setViewport(800,0,800,1000);
-//         cam2.setBackgroundColor(0x002244);
-//         cam2.zoom = 1.9;
-//         //this.cameras.main = cam2;
-//         this.cameras.main.setVisible(false);
-//         cam2.setBounds(0, 0, 1920, 1080);
-//         this.addFullScreen();
-
-//         //create player
-//         this.player = new VeteranPlayer(this, 500, 300, 'vet');
-        
-//         // follow camera
-//         cam2.startFollow(this.player, true, 0.05, 0.05);
-
-//         // create world
-//         // this.walls = this.physics.add.staticGroup();
-//         // let square = this.add.image(600,100, 'veteranHouse').setOrigin(0,0).setScale(3);
-//         // let wall = this.add.rectangle(50,500,1600,100, 0xaa0000).setOrigin(0,0);
-//         // this.walls.add(wall);
-//         // this.walls.add(square);
-
-//         this.door = this.add.rectangle(0,300,100,100, 0xaaaa00).setOrigin(0,0);
-//         this.physics.add.existing(this.door);
-        
-//         this.npcs = this.physics.add.staticGroup();
-//         this.NPCArray = [];
-//         this.addNPC(600,400, "hi", '0xaaaaee');
-//         this.addNPC(400,200, "yo", '0xeeaaaa');
-
-//         // add physics
-//         // Enable collision for specific tiles
-//         layer2.setCollisionByExclusion([-1], true, layer2);
-//         layer2.setDepth(5);
-
-//         //layer2.setCollision([4, 5, 6, 2, 3, 0, 1, 20, 21, 22, 18, 19, 16, 17, 2, 3, 18, 19, 4, 5, 6, 20, 21, 22]);
-//         this.player.body.setSize(20,20);//, false).setOffset(50,50);
-//         // Set up colliders for the layer
-//         //this.physics.world.setBounds(0, 0, layer2.widthInPixels, layer2.heightInPixels);
-//         this.physics.add.collider(this.player, layer2, (player, tile) => {
-//             console.log('player' + this.player.y + " tile " + tile.y * 100);
-//             if (this.player.y < tile.y * 100) {
-//                 this.player.setDepth(0);  // Render player underneath the tiles
-//             } else {
-//                 this.player.setDepth(10);  // Render player above the tiles
-//             }
-//         });
-        
-
-//         // Customizing tile properties for collision
-//         //layer.setTileLocationCallback(x, y, width, height, callback, context);
-
-//         this.physics.add.collider(this.player, this.walls);
-
-//         this.physics.add.collider(this.player, this.door, ()=>{
-//             this.game.gameOptions.veteranLocation = 'desert';
-//             console.log('to desert!');
-//             this.scene.stop();
-
-//             if(this.scene.isActive('Desert'))
-//                 this.scene.resume('Desert');
-//             else
-//                 this.scene.launch('Desert');
-
-//         });
-
-
-//         // // Step 4: Listen for 'e' key press event
-//         this.physics.add.overlap(this.player, this.npcs, (player, npc)=>{
-//             //console.log('touching');
-
-//             if (this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M).isDown){
-//                 //console.log('interact');
-//                 this.tweens.add({
-//                     targets: this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)].text,
-//                     alpha: 1,
-//                     duration: 500, // Fade-in duration in milliseconds
-//                     //delay: 500, // Delay before the fade-in animation starts in milliseconds
-//                     hold: 3000, // Text will remain visible for 3 seconds
-//                     onComplete: () => {
-//                         this.tweens.add({
-//                           targets:  this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)].text,
-//                           alpha: 0,
-//                           duration: 1000,
-//                           delay: 0
-//                         });
-//                     }
-//                   });
-//             }
-
-//         });
-
-//     }
-
-//     update(){
-//         this.player.update();
-//     }
-
-//     addNPC(x,y, text, color){
-//         let NPC = this.add.rectangle(x,y,100,100, color).setOrigin(0,0);
-        
-//         let textObj = this.add.text(x+50, y-50, text, { font: '16px Arial', fill: '#ffffff' }).setOrigin(0.5,1).setAlpha(0);
-        
-//         this.npcs.add(NPC);
-//         this.NPCArray.push({npc: NPC, text: textObj});
-
-//         //console.log(this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == NPC)].text.text);
-//     }
-
-//     addFullScreen(){
-//         this.input.keyboard.on('keydown-ESC',  () => {
-//             // Set the zoom level to 0.8
-//             this.scale.setZoom(0.8);
-//         }, this);
-//         this.add.text(600,800, "FULLSCREEN")
-//             .setScrollFactor(0)
-//             .setStyle({ fontSize: `20px` })
-//             .setInteractive({useHandCursor: true})
-//             .on('pointerdown', () => {
-//                 if (this.scale.isFullscreen) {
-//                     this.scale.stopFullscreen();
-//                     this.scale.setZoom(0.8);
-//                 } else {
-//                     this.scale.startFullscreen();
-//                     this.scale.setZoom(1);
-//                 }
-//         });
-//     }
-
-// }
 
 class DoubleScene extends Phaser.Scene {
     constructor(key,name, coords1, coords2) {
@@ -477,23 +99,15 @@ class DoubleScene extends Phaser.Scene {
         this.npcs = this.physics.add.staticGroup();
         this.NPCArray = [];
 
-        this.positions = [{'name' : "desert1", coord: [500,200]},
-                        {'name' : "NoviceHouse", coord: [200,400]},
+        this.positions = [{'name' : "desert1", coord: [550,450]},
+                        {'name' : "NoviceHouse", coord: [200,450]},
                         {'name' : "City", coord: [400,400]},
+                        {'name' : "City2", coord: [450,400]},
                         {'name' : "Town", coord: [1750,400]},
                         {'name' : "Town2", coord: [950,700]},
                         {'name' : "desert2", coord: [150,500]},
                         {'name' : "UndergroundMine", coord: [700,550]}];
-
-        console.log(this.game.gameOptions.novPrev);
-        let novPos = this.positions[this.positions.findIndex(obj => obj.name == this.game.gameOptions.novPrev)];
-        let vetPos = this.positions[this.positions.findIndex(obj => obj.name == this.game.gameOptions.vetPrev)];
-
-        if(novPos)
-            this.p1Cords = novPos.coord;
         
-        if(vetPos)
-            this.p2Cords = vetPos.coord;
     }
 
     create(){
@@ -534,6 +148,13 @@ class DoubleScene extends Phaser.Scene {
         //this.cameras.main = cam;
         if(this.cameras.main)
             this.cameras.main.setVisible(false);
+        
+        console.log('novprev');
+        console.log(this.game.gameOptions.novPrev);
+        let novPos = this.positions[this.positions.findIndex(obj => obj.name == this.game.gameOptions.novPrev)];
+
+        if(novPos)
+            this.p1Cords = novPos.coord;
         
 
         // create player
@@ -583,6 +204,15 @@ class DoubleScene extends Phaser.Scene {
             this.cameras.main.setVisible(false);
         this.addFullScreen();
 
+
+        console.log('vetprev');
+        console.log(this.game.gameOptions.vetPrev);
+        let vetPos = this.positions[this.positions.findIndex(obj => obj.name == this.game.gameOptions.vetPrev)];
+
+        if(vetPos)
+            this.p2Cords = vetPos.coord;
+        
+        console.log(vetPos);
         
         // create player
         if(this.p2Cords) {
@@ -622,7 +252,7 @@ class DoubleScene extends Phaser.Scene {
             // Set the zoom level to 0.8
             this.scale.setZoom(0.8);
         }, this);
-        let fullscreen = this.add.text(600,800, "FULLSCREEN")
+        this.fullscreen = this.add.text(600,800, "FULLSCREEN")
             .setScrollFactor(0)
             .setStyle({ fontSize: `20px` })
             .setInteractive({useHandCursor: true})
@@ -636,7 +266,7 @@ class DoubleScene extends Phaser.Scene {
                 }
             });
 
-        this.camIgnoreList.push(fullscreen);
+        this.camIgnoreList.push(this.fullscreen);
     }
 
     initDialogNovice(){
@@ -990,6 +620,10 @@ class NoviceHouse extends DoubleScene {
         this.load.image('noviceRoomTiles', 'assets/NoviceRoom/NoviceRoomSpriteSheet.png');
         this.load.tilemapCSV('NoviceRoom-ground', 'assets/NoviceRoom/NoviceRoom_ground.csv');
         this.load.tilemapCSV('NoviceRoom-objects', 'assets/NoviceRoom/NoviceRoom_objects.csv');
+
+        this.load.image('cityTiles', 'assets/City/CitySheet.png');
+        this.load.tilemapCSV('city-ground', 'assets/City/City_ground.csv');
+        this.load.tilemapCSV('city-objects', 'assets/City/City_objects.csv');
     }
 
     create(){
@@ -1006,7 +640,7 @@ class NoviceHouse extends DoubleScene {
         //this.layer2.removeTileAt(tile.x,tile.y); remove test
 
 
-        this.door = this.add.rectangle(400,450,100,100, 0xaaaaaa).setOrigin(0,0);
+        this.door = this.add.rectangle(400,450,100,100, 0xaaaaaa).setOrigin(0,0).setAlpha(0.5);
         this.physics.add.existing(this.door);
 
         // add physics
@@ -1056,6 +690,7 @@ class NoviceHouse extends DoubleScene {
             });
 
             this.physics.add.collider(this.player, this.door, ()=>{
+                
                 this.game.gameOptions.novPrev = 'NoviceHouse';
                 this.game.gameOptions.noviceLocation = 'City';
                 console.log('to City!');
@@ -1078,9 +713,7 @@ class City extends DoubleScene {
     }
     
     preload(){
-        this.load.image('cityTiles', 'assets/City/CitySheet.png');
-        this.load.tilemapCSV('city-ground', 'assets/City/City_ground.csv');
-        this.load.tilemapCSV('city-objects', 'assets/City/City_objects.csv');
+        
     }
 
     create(){
@@ -1097,8 +730,11 @@ class City extends DoubleScene {
         //this.layer2.removeTileAt(tile.x,tile.y); remove test
 
 
-        this.door = this.add.rectangle(500,310,200,100, 0xaaaaaa).setOrigin(0,0).setAlpha(0);
+        this.door = this.add.rectangle(500,310,200,100, 0xaaaaaa).setOrigin(0,0).setAlpha(0.5);
         this.physics.add.existing(this.door);
+
+        this.door2 = this.add.rectangle(100,310,100,100, 0xaaaaaa).setOrigin(0,0).setAlpha(0.5);
+        this.physics.add.existing(this.door2);
 
         // add physics
         
@@ -1157,6 +793,18 @@ class City extends DoubleScene {
     
             });
 
+            this.physics.add.collider(this.player, this.door2, ()=>{
+                this.game.gameOptions.novPrev = 'City2';
+                this.game.gameOptions.noviceLocation = 'NoviceHouse';
+                console.log('to home!');
+                this.scene.stop();
+                if(this.scene.isActive('NoviceHouse'))
+                    this.scene.resume('NoviceHouse');
+                else
+                    this.scene.launch('NoviceHouse');
+    
+            });
+
         }
         
     }
@@ -1187,7 +835,7 @@ class UndergroundMine extends DoubleScene {
         //this.layer2.removeTileAt(tile.x,tile.y); remove test
 
 
-        this.door = this.add.rectangle(900,750,100,100, 0xaaaaaa).setOrigin(0,0);
+        this.door = this.add.rectangle(900,750,100,100, 0xaaaaaa).setOrigin(0,0).setAlpha(0.5);
         this.physics.add.existing(this.door);
 
         // add physics
@@ -1252,20 +900,28 @@ class UndergroundMine extends DoubleScene {
                     this.layer2.removeTileAt(tile.x,tile.y);
                     this.game.gameOptions.rocksCollected++;
                     console.log('total rocks:' + this.game.gameOptions.rocksCollected);
+
+                    if (this.game.gameOptions.rocksCollected == 9)
+                        this.goBackDialog("I got everything I wanted. Time to go back and add it to my collection.");
                 }
             });
 
             this.physics.add.overlap(this.player, this.door, ()=>{
+                if (this.game.gameOptions.rocksCollected < 9)
+                {   
+                    this.goBackDialog("I can't leave without grabbing all the pretty rocks..");
+                    this.player.x = 950;
+                    this.player.y = 500;
+                    return;
+                }
                 this.game.gameOptions.novPrev = 'UndergroundMine';
                 this.game.gameOptions.noviceLocation = 'Town';
                 console.log('to Town!');
-                if (this.game.gameOptions.veteranLocation != 'UndergroundMine')
-                    this.scene.stop();
-                else {
+
                     this.player.destroy();
                     this.p1Init = false;
                     this.cam.setVisible(false);
-                }
+                
                 if(this.scene.isActive('Town'))
                     this.scene.resume('Town');
                 else
@@ -1292,16 +948,15 @@ class UndergroundMine extends DoubleScene {
             });
 
             this.physics.add.overlap(this.player2, this.door, ()=>{
+                
                 this.game.gameOptions.vetPrev = 'UndergroundMine';
                 this.game.gameOptions.veteranLocation = 'Town';
                 console.log('to Town!');
-                if (this.game.gameOptions.noviceLocation != 'UndergroundMine')
-                    this.scene.stop();
-                else {
+
                     this.player2.destroy();
                     this.p2Init = false;
                     this.cam2.setVisible(false);
-                }
+                
 
                 if(this.scene.isActive('Town'))
                     this.scene.resume('Town');
@@ -1312,6 +967,51 @@ class UndergroundMine extends DoubleScene {
 
         }
         
+    }
+
+    goBackDialog(inputText){
+        this.player.canMove = false;
+
+        this.diaBox.setAlpha(1);
+        this.diaBoxText.setAlpha(1);
+        this.novicePortrait.setAlpha(1);
+
+        // Split the text into individual words
+        let words = inputText.split(" ");
+        this.diaBoxText.text = "";
+        let currentIndex = 0;
+
+        // Start displaying the text one word at a time
+        let event = this.time.addEvent({
+            delay: 100, // Delay between each word (in milliseconds)
+            callback: () => {
+                // Check if there are more words to display
+                if (currentIndex < words.length) {
+                    // Get the next word to display
+                    var word = words[currentIndex];
+            
+                    // Increment the current index
+                    currentIndex++;
+            
+                    // Update the text content
+                    this.diaBoxText.text = this.diaBoxText.text + " " + word;
+                } else {
+                    // All words have been displayed, stop the event
+                    this.time.addEvent({
+                        delay: 1000,
+                        callback: () => {
+                            this.player.canMove = true;
+                            this.diaBox.setAlpha(0);
+                            this.diaBoxText.setAlpha(0);
+                            this.novicePortrait.setAlpha(0);
+                            event.remove();
+                        }
+                    });
+                }
+            },
+            callbackScope: this,
+            loop: true
+        });
     }
 }
 
@@ -1341,10 +1041,10 @@ class Desert extends DoubleScene {
         let ele = map2.addTilesetImage('cityTiles', null, 100,100);
         this.layer3 = map3.createLayer(0, ele, 0, 0);
 
-        this.door = this.add.rectangle(1800,400,100,100, 0xaaaaaa).setOrigin(0,0);
+        this.door = this.add.rectangle(1800,400,100,100, 0xaaaaaa).setOrigin(0,0).setAlpha(0.5);
         this.physics.add.existing(this.door);
 
-        this.door2 = this.add.rectangle(210,400,100,100, 0xaaaaaa).setOrigin(0,0);
+        this.door2 = this.add.rectangle(210,400,100,100, 0xaaaaaa).setOrigin(0,0).setAlpha(0.5);
         this.physics.add.existing(this.door2);
 
         // add physics
@@ -1438,13 +1138,11 @@ class Desert extends DoubleScene {
                 this.game.gameOptions.novPrev = 'desert2';
                 this.game.gameOptions.noviceLocation = 'Town';
                 console.log('to Town!');
-                if (this.game.gameOptions.veteranLocation != 'desert')
-                    this.scene.stop();
-                else{
+
                     this.player.destroy();
                     this.p1Init = false;
                     this.cam.setVisible(false);
-                }
+                
                     
 
                 if(this.scene.isActive('Town'))
@@ -1455,16 +1153,28 @@ class Desert extends DoubleScene {
             });
 
             this.physics.add.overlap(this.player, this.door2, ()=>{
-                this.game.gameOptions.novPrev = 'desert1';
-                this.game.gameOptions.noviceLocation = 'City';
-                console.log('to City!');
-                if (this.game.gameOptions.veteranLocation != 'desert')
-                    this.scene.stop();
-                else{
+                if(this.game.gameOptions.rocksCollected == 9){
+                    this.game.gameOptions.noviceLocation = 'Ending';
                     this.player.destroy();
                     this.p1Init = false;
                     this.cam.setVisible(false);
+
+                    if(this.scene.isActive('Ending'))
+                        this.scene.resume('Ending');
+                    else
+                        this.scene.launch('Ending');
+
+                    return;
                 }
+                
+                this.game.gameOptions.novPrev = 'desert1';
+                this.game.gameOptions.noviceLocation = 'City';
+                console.log('to City!');
+          
+                    this.player.destroy();
+                    this.p1Init = false;
+                    this.cam.setVisible(false);
+                
                     
 
                 if(this.scene.isActive('City'))
@@ -1502,18 +1212,21 @@ class Desert extends DoubleScene {
                 this.game.gameOptions.vetPrev = 'desert2';
                 this.game.gameOptions.veteranLocation = 'Town';
                 console.log('to Town!');
-                if (this.game.gameOptions.noviceLocation != 'desert')
-                    this.scene.stop();
-                else {
                     this.player2.destroy();
                     this.p2Init = false;
                     this.cam2.setVisible(false);
-                }
+                
                     
                 if(this.scene.isActive('Town'))
                     this.scene.resume('Town');
                 else
                     this.scene.launch('Town');
+    
+            });
+
+            this.physics.add.overlap(this.player2, this.door2, ()=>{
+                this.game.gameOptions.touchedEle = true;
+                console.log('touched');
     
             });
 
@@ -1555,10 +1268,10 @@ class Town extends DoubleScene {
         let miningTile = map4.addTilesetImage('mineciteTiles', null, 100,100);
         this.layer4 = map4.createLayer(0, miningTile, 0, 0);
 
-        this.door = this.add.rectangle(650,405,100,100, 0xaaaaaa).setOrigin(0,0);
+        this.door = this.add.rectangle(650,405,100,100, 0xaaaaaa).setOrigin(0,0).setAlpha(0.5);
         this.physics.add.existing(this.door);
 
-        this.door2 = this.add.rectangle(0,500,50,100, 0xaaaaaa).setOrigin(0,0);
+        this.door2 = this.add.rectangle(0,500,50,100, 0xaaaaaa).setOrigin(0,0).setAlpha(0.5);
         this.physics.add.existing(this.door2);
 
         // add physics
@@ -1576,7 +1289,7 @@ class Town extends DoubleScene {
         super.initDialogNovice();
         super.initDialogVeteran();
 
-        super.addNPC(400,300, [{self: false, text: '“I’m not going back to work, if you want the rock go get it yourself. What do you think going on strike means?'}, 
+        super.addNPC(400,300, [{self: false, text: 'I’m not going back to work, if you want the rock go get it yourself. What do you think going on strike means?'}, 
                                 {self: true, text: 'Fine.'}],
                                 [{self: false, text: 'They have ignored us for too long. Worked us to the bone…'},
                                 {self: false, text: 'Tomorrow they will have to listen to us… I wonder what’s going on past the roadblock.'}, 
@@ -1637,13 +1350,11 @@ class Town extends DoubleScene {
                 this.game.gameOptions.novPrev = 'Town2';
                 this.game.gameOptions.noviceLocation = 'UndergroundMine';
                 console.log('to mines!');
-                if (this.game.gameOptions.veteranLocation != 'Town')
-                    this.scene.stop();
-                else{
+       
                     this.player.destroy();
                     this.p1Init = false;
                     this.cam.setVisible(false);
-                }
+                
                     
 
                 if(this.scene.isActive('UndergroundMine'))
@@ -1657,13 +1368,11 @@ class Town extends DoubleScene {
                 this.game.gameOptions.novPrev = 'Town';
                 this.game.gameOptions.noviceLocation = 'desert';
                 console.log('to desert!');
-                if (this.game.gameOptions.veteranLocation != 'Town')
-                    this.scene.stop();
-                else {
+           
                     this.player.destroy();
                     this.p1Init = false;
                     this.cam.setVisible(false);
-                }
+                
 
                 if(this.scene.isActive('Desert'))
                     this.scene.resume('Desert');
@@ -1706,16 +1415,27 @@ class Town extends DoubleScene {
             });
 
             this.physics.add.overlap(this.player2, this.door, ()=>{
-                this.game.gameOptions.vetPrev = 'Town2';
-                this.game.gameOptions.veteranLocation = 'UndergroundMine';
-                console.log('to mines!');
-                if (this.game.gameOptions.noviceLocation != 'Town')
-                    this.scene.stop();
-                else {
+                if(this.game.gameOptions.touchedEle){
+                    this.game.gameOptions.veteranLocation = 'Ending';
                     this.player2.destroy();
                     this.p2Init = false;
                     this.cam2.setVisible(false);
+
+                    if(this.scene.isActive('Ending'))
+                        this.scene.resume('Ending');
+                    else
+                        this.scene.launch('Ending');
+
+                    return;
                 }
+                this.game.gameOptions.vetPrev = 'Town2';
+                this.game.gameOptions.veteranLocation = 'UndergroundMine';
+                console.log('to mines!');
+         
+                    this.player2.destroy();
+                    this.p2Init = false;
+                    this.cam2.setVisible(false);
+                
                     
                 if(this.scene.isActive('UndergroundMine'))
                     this.scene.resume('UndergroundMine');
@@ -1728,13 +1448,10 @@ class Town extends DoubleScene {
                 this.game.gameOptions.vetPrev = 'Town';
                 this.game.gameOptions.veteranLocation = 'desert';
                 console.log('to desert!');
-                if (this.game.gameOptions.noviceLocation != 'Town')
-                    this.scene.stop();
-                else {
-                    this.player2.destroy();
-                    this.p2Init = false;
-                    this.cam2.setVisible(false);
-                }
+                this.player2.destroy();
+                this.p2Init = false;
+                this.cam2.setVisible(false);
+            
 
                 if(this.scene.isActive('Desert'))
                     this.scene.resume('Desert');
@@ -1743,6 +1460,88 @@ class Town extends DoubleScene {
     
             });
 
+        }
+        
+    }
+
+}
+
+class Ending extends DoubleScene {
+    constructor() {
+        super('Ending', 'Ending');
+    }
+
+
+    create(){
+
+        this.p1Init = false;
+        this.p2Init = false;
+
+    }
+
+    update(){
+
+        super.update();
+
+        if(this.player && this.player.body && !this.p1Init){
+            this.p1Init = true;
+            this.cam.setBackgroundColor(0x000000);
+            this.cam.setZoom(1);
+            this.player.setAlpha(0);
+
+            this.dude = this.add.image(400,190, 'novicePortrait').setScale(4).setScrollFactor(0).setAlpha(1);
+            this.diaBoxText = this.add.text(40, 400, "The Novice along with their civilization choose to ignore what goes on above ground. This includes where their resources come from, and the means of how they are obtained.\n\n Due to this, the Novice was not properly educated on the dangers of this rock. In their journey, they become gravely affected by the radiation, and unintentionally condemn the civilization to the same fate as them.", {
+                fontFamily: 'Century Gothic',
+                fontSize: 37,
+                color: '#ffffff',
+                align: "left",
+                wordWrap: { width: 900, useAdvancedWrap: true},
+                lineSpacing: 15,
+            })
+            .setAlpha(1)
+            .setScrollFactor(0)
+            .setScale(1)
+            .setDepth(20);
+    
+            this.cam2IgnoreList.push(this.diaBoxText);
+            this.cam2IgnoreList.push(this.dude);
+
+            this.cam.ignore(this.camIgnoreList);
+
+            if(this.cam2)
+                this.cam2.ignore(this.cam2IgnoreList);
+
+        }
+
+        if(this.player2 && this.player2.body && !this.p2Init){
+            this.p2Init = true;
+            this.cam2.setBackgroundColor(0x000000);
+            this.cam2.setZoom(1);
+            this.player2.setAlpha(0);
+            this.fullscreen.x = 800;
+            this.fullscreen.y = 1020;
+            
+            this.dude2 = this.add.image(400,190, 'veteranPortrait').setScale(4).setScrollFactor(0);
+            this.diaBoxText2 = this.add.text(40, 400, "The community has tried time and time again to inform the civilians about their poor working conditions and exposure to toxic materials, only to be ignored.\n\nThe Veteran returns to the community after concluding that once again, another day has gone by with their strike being unnoticed. Tomorrow the community will have a march where they will go down into the underground city for the first time. They will make themselves known. ", {
+                fontFamily: 'Century Gothic',
+                fontSize: 37,
+                color: '#ffffff',
+                align: "left",
+                wordWrap: { width: 900, useAdvancedWrap: true},
+                lineSpacing: 15,
+            })
+            .setAlpha(1)
+            .setScrollFactor(0)
+            .setScale(1)
+            .setDepth(20);
+    
+            this.camIgnoreList.push(this.diaBoxText2);
+            this.camIgnoreList.push(this.dude2);
+
+            this.cam2.ignore(this.cam2IgnoreList);
+
+            if(this.cam)
+                this.cam.ignore(this.camIgnoreList);
         }
         
     }
@@ -1763,7 +1562,7 @@ let config = {
             //gravity: { y: 600 }
         }
     },
-    scene: [Start, Desert, NoviceHouse, UndergroundMine, City, Town],
+    scene: [Start, Desert, NoviceHouse, UndergroundMine, City, Town, Ending],
     checkpt: false,
     pixelArt: true,
 }
@@ -1776,4 +1575,5 @@ game.gameOptions = {
     veteranLocation: 'UndergroundMine',
     vetPrev: null,
     rocksCollected: 0,
+    touchedEle: false
 }

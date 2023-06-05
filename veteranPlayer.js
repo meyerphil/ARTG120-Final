@@ -18,7 +18,7 @@ export default class VeteranPlayer extends Phaser.Physics.Arcade.Sprite {
         // create health
         this.health = [];
         this.maxHealth = 3;
-        this.moveSpeed = 500;
+        this.moveSpeed = 150;
         this.canMove = true;
         
         // create animations
