@@ -38,8 +38,9 @@ class Start extends Phaser.Scene {
         // this.scene.launch('UndergroundMine');
         this.addFullScreen();
 
-        this.add.text(500,200, "The Last Extraction").setTint(0xaa00aa).setFontSize(75);
+        this.add.text(400,150, "The Last Extraction").setTint(0xaa00aa).setFontSize(100);
         this.add.text(500,800, "Movement: (wasd) / (arrows)\nInteract: (E) / (M)").setTint(0xaaaaaa).setFontSize(50);
+        this.add.text(270,250, "Created by Alejandro Hernandez, Nailea Llamas,\nPhil Meyer, and Tau Carmichael").setTint(0xaaaaaa).setFontSize(50);
         let start = this.add.text(800,500, "Start").setTint(0xaa00aa).setFontSize(75)
         .setInteractive();
         
