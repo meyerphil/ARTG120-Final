@@ -35,7 +35,7 @@ class Start extends Phaser.Scene {
         this.scale.setZoom(0.8);
 
         this.scene.launch('NoviceHouse');
-        this.scene.launch('Veteran');
+        this.scene.launch('UndergroundMine');
         // this.addFullScreen();
 
         // this.add.text(500,200, "The Last Extraction").setTint(0xaa00aa).setFontSize(75);
@@ -981,6 +981,9 @@ class NoviceHouse extends DoubleScene {
         let map2 = this.make.tilemap({ key: 'NoviceRoom-objects', tileWidth: 100, tileHeight: 100 });
         let houseTileset = map2.addTilesetImage('noviceRoomTiles', null, 100,100);
         this.layer2 = map2.createLayer(0, houseTileset, 0, 0);
+        
+        //hi
+        //this.layer2.removeTileAt(tile.x,tile.y); remove test
 
 
         this.door = this.add.rectangle(400,450,100,100, 0xaaaaaa).setOrigin(0,0);
@@ -1034,6 +1037,111 @@ class NoviceHouse extends DoubleScene {
 
             this.physics.add.collider(this.player, this.door, ()=>{
                 this.game.gameOptions.noviceLocation = 'desert';
+                console.log('to desert!');
+                this.scene.stop();
+                if(this.scene.isActive('Desert'))
+                    this.scene.resume('Desert');
+                else
+                    this.scene.launch('Desert');
+    
+            });
+
+        }
+        
+    }
+}
+
+class UndergroundMine extends DoubleScene {
+    constructor() {
+        super('UndergroundMine', 'UndergroundMine',null, [950,250]);
+    }
+    
+    preload(){
+        this.load.image('mineTiles', 'assets/Mine/mineSpriteSheet.png');
+        this.load.tilemapCSV('mine-cave', 'assets/Mine/Mine_cave.csv');
+        this.load.tilemapCSV('mine-objects', 'assets/Mine/Mine_objects.csv');
+    }
+
+    create(){
+        // create map
+        let map = this.make.tilemap({ key: 'mine-cave', tileWidth: 100, tileHeight: 100 });
+        let tileset = map.addTilesetImage('mineTiles', null, 100,100);
+        this.layer = map.createLayer(0, tileset, 0, 0);
+
+        let map2 = this.make.tilemap({ key: 'mine-objects', tileWidth: 100, tileHeight: 100 });
+        //let houseTileset = map2.addTilesetImage('noviceRoomTiles', null, 100,100);
+        this.layer2 = map2.createLayer(0, tileset, 0, 0);
+        
+        //hi
+        //this.layer2.removeTileAt(tile.x,tile.y); remove test
+
+
+        this.door = this.add.rectangle(900,750,100,100, 0xaaaaaa).setOrigin(0,0);
+        this.physics.add.existing(this.door);
+
+        // add physics
+        
+        // Enable collision for specific tiles
+        this.layer2.setCollisionByExclusion([-1]);
+        this.layer2.setDepth(5);
+        this.layer.setCollision([0,4]);
+
+        this.p1Init = false;
+        this.p2Init = false;
+
+
+
+        // add dialog
+        super.initDialogNovice();
+        super.initDialogVeteran();
+
+        super.addNPC(1600,400, [{self: false, text: 'Who tf are you'}, 
+                                {self: true, text: 'idk bruh.'}],
+
+                                [{self: false, text: 'Seems like everyone left the mines to go on strike.'}, 
+                                {self: true, text: "Rookies, I'll go take a look and see what's going on."}],
+                                'npcVet1', 'memBubble', 
+                                {self: this.novicePortrait, npc: this.npcVet1Portrait}, {self: this.veteranPortrait, npc: this.npcVet1Portrait2});
+
+    }
+
+    update(){
+
+        super.update();
+
+        if(this.player && !this.p1Init){
+            this.p1Init = true;
+
+            this.player.body.setSize(20,20);
+            this.physics.add.collider(this.player, this.layer2, (player, tile) => {
+                console.log('player' + this.player.y + " tile " + tile.y * 100);
+                if (this.player.y < tile.y * 100) {
+                    this.player.setDepth(0);  // Render player underneath the tiles
+                } else {
+                    this.player.setDepth(10);  // Render player above the tiles
+                }
+            });
+
+        }
+
+        if(this.player2 && !this.p2Init){
+            this.p2Init = true;
+            this.cam2.setBackgroundColor(0x000000);
+
+            this.player2.body.setSize(20,20);
+
+            this.physics.add.collider(this.player2, this.layer);
+            this.physics.add.collider(this.player2, this.layer2, (player, tile) => {
+                console.log('player' + this.player2.y + " tile " + tile.y * 100);
+                if (this.player2.y < tile.y * 100) {
+                    this.player2.setDepth(0);  // Render player underneath the tiles
+                } else {
+                    this.player2.setDepth(10);  // Render player above the tiles
+                }
+            });
+
+            this.physics.add.collider(this.player2, this.door, ()=>{
+                this.game.gameOptions.veteranLocation = 'desert';
                 console.log('to desert!');
                 this.scene.stop();
                 if(this.scene.isActive('Desert'))
@@ -1165,7 +1273,7 @@ let config = {
             //gravity: { y: 600 }
         }
     },
-    scene: [Start, Novice, Veteran, Desert, NoviceHouse],
+    scene: [Start, Novice, Veteran, Desert, NoviceHouse, UndergroundMine],
     checkpt: false,
     pixelArt: true,
 }
@@ -1174,5 +1282,5 @@ let game = new Phaser.Game(config);
 
 game.gameOptions = {
     noviceLocation: 'NoviceHouse',
-    veteranLocation: 'lower',
+    veteranLocation: 'UndergroundMine',
 }
