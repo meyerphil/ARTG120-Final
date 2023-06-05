@@ -1,6 +1,6 @@
  ARTG120-Final
 
-#The Last Extraction
+## The Last Extraction
 
 ## Created by Alejandro Hernandez, Nailea Llamas,\nPhil Meyer, and Tau Carmichael
 
