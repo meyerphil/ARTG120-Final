@@ -79,383 +79,383 @@ class Start extends Phaser.Scene {
 
 
 // Scene 1 class
-class Novice extends Phaser.Scene {
-    constructor() {
-      super('Novice');
-    }
+// class Novice extends Phaser.Scene {
+//     constructor() {
+//       super('Novice');
+//     }
     
-    create(){
-        // create camera
-        let cam = this.cameras.add(0,0,955,1080);
-        //cam.setViewport(800,0,800,1000);
-        cam.setBackgroundColor(0x440022);
-        cam.zoom = 1.9;
-        // cam.scrollY +=100;
-        //this.cameras.main = cam;
-        this.cameras.main.setVisible(false);
+//     create(){
+//         // create camera
+//         let cam = this.cameras.add(0,0,955,1080);
+//         //cam.setViewport(800,0,800,1000);
+//         cam.setBackgroundColor(0x440022);
+//         cam.zoom = 1.9;
+//         // cam.scrollY +=100;
+//         //this.cameras.main = cam;
+//         this.cameras.main.setVisible(false);
 
-        // create player
-        this.player = new NovicePlayer(this, 500, 300, 'nov');
+//         // create player
+//         this.player = new NovicePlayer(this, 500, 300, 'nov');
 
-        // follow camera
-        cam.startFollow(this.player, true, 0.05, 0.05);
+//         // follow camera
+//         cam.startFollow(this.player, true, 0.05, 0.05);
         
-        // create world
-        this.walls = this.physics.add.staticGroup();
-        let square = this.add.image(200,250, 'noviceHouse').setOrigin(0,0).setScale(3);
-        let wall = this.add.rectangle(50,500,1600,100, 0x0000aa).setOrigin(0,0);
-        this.walls.add(wall);
-        this.walls.add(square);
+//         // create world
+//         this.walls = this.physics.add.staticGroup();
+//         let square = this.add.image(200,250, 'noviceHouse').setOrigin(0,0).setScale(3);
+//         let wall = this.add.rectangle(50,500,1600,100, 0x0000aa).setOrigin(0,0);
+//         this.walls.add(wall);
+//         this.walls.add(square);
 
-        this.door = this.add.rectangle(900,200,100,100, 0xaaaa00).setOrigin(0,0);
-        this.physics.add.existing(this.door);
+//         this.door = this.add.rectangle(900,200,100,100, 0xaaaa00).setOrigin(0,0);
+//         this.physics.add.existing(this.door);
 
-        // add dialog
+//         // add dialog
 
-        this.initDialog();
+//         this.initDialog();
 
-        // add NPCS
-        this.npcs = this.physics.add.staticGroup();
-        this.NPCArray = [];
-        //this.addNPC(300,100, '...', '0xaaaaee');
-        this.addNPC(600,200, [{self: false, text: 'I don’t understand why they are even complaining. A strike is unnecessary.'},
-                                {self: false, text: 'They enjoy the work. If you ask me, I should be the one to complain.'},
-                                {self: true, text: 'ok.'}], 'npcCiv1', 'civBubble', 
-                                this.novicePortrait, this.npcCiv1Portrait);
+//         // add NPCS
+//         this.npcs = this.physics.add.staticGroup();
+//         this.NPCArray = [];
+//         //this.addNPC(300,100, '...', '0xaaaaee');
+//         this.addNPC(600,200, [{self: false, text: 'I don’t understand why they are even complaining. A strike is unnecessary.'},
+//                                 {self: false, text: 'They enjoy the work. If you ask me, I should be the one to complain.'},
+//                                 {self: true, text: 'ok.'}], 'npcCiv1', 'civBubble', 
+//                                 this.novicePortrait, this.npcCiv1Portrait);
 
-        this.addNPC(300,100, [{self: false, text: 'They should put in more effort instead of using the strike as an excuse to get out of work.'}, 
-                                {self: false, text: 'If they really want to be respected they should work.'}],
-                                'npcCiv2', 'civBubble', 
-                                this.novicePortrait, this.npcCiv2Portrait);
+//         this.addNPC(300,100, [{self: false, text: 'They should put in more effort instead of using the strike as an excuse to get out of work.'}, 
+//                                 {self: false, text: 'If they really want to be respected they should work.'}],
+//                                 'npcCiv2', 'civBubble', 
+//                                 this.novicePortrait, this.npcCiv2Portrait);
 
-        // add physics
-        this.physics.add.collider(this.player, this.walls);
+//         // add physics
+//         this.physics.add.collider(this.player, this.walls);
 
-        this.noviceInteractionNPC();
+//         this.noviceInteractionNPC();
 
-        this.physics.add.collider(this.player, this.door, ()=>{
-            this.game.gameOptions.noviceLocation = 'desert';
-            console.log('to desert!');
-            this.scene.stop();
-            if(this.scene.isActive('Desert'))
-                this.scene.resume('Desert');
-            else
-                this.scene.launch('Desert');
+//         this.physics.add.collider(this.player, this.door, ()=>{
+//             this.game.gameOptions.noviceLocation = 'desert';
+//             console.log('to desert!');
+//             this.scene.stop();
+//             if(this.scene.isActive('Desert'))
+//                 this.scene.resume('Desert');
+//             else
+//                 this.scene.launch('Desert');
 
-        });
+//         });
 
-        //console.log(this.NPCArray);
+//         //console.log(this.NPCArray);
 
-    }
+//     }
 
-    noviceInteractionNPC(){
-        // // Step 4: Listen for 'e' key press event
-        this.physics.add.overlap(this.player, this.npcs, (player, npc)=>{
-            //console.log('touching');
+//     noviceInteractionNPC(){
+//         // // Step 4: Listen for 'e' key press event
+//         this.physics.add.overlap(this.player, this.npcs, (player, npc)=>{
+//             //console.log('touching');
             
-            if (this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E).isDown){
-                let npc222 = this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)];
+//             if (this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E).isDown){
+//                 let npc222 = this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)];
                 
-                if(npc222.pause)
-                    return;
-                npc222.pause = true;
+//                 if(npc222.pause)
+//                     return;
+//                 npc222.pause = true;
 
-                if(npc222.convoIndex > 0){
-                    if(npc222.text[npc222.convoIndex - 1].self){ // disable portraits
-                        npc222.self.setAlpha(0);
-                    } else {
-                        npc222.npcPort.setAlpha(0);
-                    }
-                }
-                this.dialogNext(npc222);
-            }
+//                 if(npc222.convoIndex > 0){
+//                     if(npc222.text[npc222.convoIndex - 1].self){ // disable portraits
+//                         npc222.self.setAlpha(0);
+//                     } else {
+//                         npc222.npcPort.setAlpha(0);
+//                     }
+//                 }
+//                 this.dialogNext(npc222);
+//             }
 
-        });
-    }
+//         });
+//     }
 
-    initDialog(){
-        this.diaBox = this.add.image(480,600, 'diaBox')
-        .setOrigin(0.5,0)
-        .setScale(1)
-        .setScrollFactor(0)
-        .setAlpha(1)
-        .setDepth(20);
+//     initDialog(){
+//         this.diaBox = this.add.image(480,600, 'diaBox')
+//         .setOrigin(0.5,0)
+//         .setScale(1)
+//         .setScrollFactor(0)
+//         .setAlpha(1)
+//         .setDepth(20);
 
-        this.novicePortrait = this.add.image(310,600, 'novicePortrait')
-        .setOrigin(0,1)
-        .setScale(1.5)
-        .setScrollFactor(0)
-        .setAlpha(0)
-        .setDepth(20);
+//         this.novicePortrait = this.add.image(310,600, 'novicePortrait')
+//         .setOrigin(0,1)
+//         .setScale(1.5)
+//         .setScrollFactor(0)
+//         .setAlpha(0)
+//         .setDepth(20);
 
-        this.npcCiv1Portrait = this.add.image(650,600, 'npcCiv1Portrait')
-        .setOrigin(1,1)
-        .setScale(1.5)
-        .setScrollFactor(0)
-        .setAlpha(0)
-        .setDepth(20);
+//         this.npcCiv1Portrait = this.add.image(650,600, 'npcCiv1Portrait')
+//         .setOrigin(1,1)
+//         .setScale(1.5)
+//         .setScrollFactor(0)
+//         .setAlpha(0)
+//         .setDepth(20);
 
-        this.npcCiv2Portrait = this.add.image(650,600, 'npcCiv2Portrait')
-        .setOrigin(1,1)
-        .setScale(1.5)
-        .setScrollFactor(0)
-        .setAlpha(0)
-        .setDepth(20);
+//         this.npcCiv2Portrait = this.add.image(650,600, 'npcCiv2Portrait')
+//         .setOrigin(1,1)
+//         .setScale(1.5)
+//         .setScrollFactor(0)
+//         .setAlpha(0)
+//         .setDepth(20);
 
-        this.diaBoxText = this.add.text(320, 621, "Placeholder, hello and welcome to my code! I didn't expect anyone reading this. I am writing this at 1:17am, 6/4/23", {
-            fontFamily: 'Century Gothic',
-            fontSize: 22,
-            color: '#ffffff',
-            align: "left",
-            wordWrap: { width: 350, useAdvancedWrap: true},
-            lineSpacing: 15,
-        })
-        .setAlpha(1)
-        .setScrollFactor(0)
-        .setScale(1)
-        .setDepth(20);
-    }
+//         this.diaBoxText = this.add.text(320, 621, "Placeholder, hello and welcome to my code! I didn't expect anyone reading this. I am writing this at 1:17am, 6/4/23", {
+//             fontFamily: 'Century Gothic',
+//             fontSize: 22,
+//             color: '#ffffff',
+//             align: "left",
+//             wordWrap: { width: 350, useAdvancedWrap: true},
+//             lineSpacing: 15,
+//         })
+//         .setAlpha(1)
+//         .setScrollFactor(0)
+//         .setScale(1)
+//         .setDepth(20);
+//     }
 
-    dialogNext(npc222){
-        if(npc222.convoIndex == npc222.text.length){
-            console.log('done');
-            this.diaBox.setAlpha(0);
-            this.diaBoxText.setAlpha(0);
-            npc222.bubble.setAlpha(0);
-            npc222.convoIndex = 0;
-            this.player.canMove = true;
-            this.time.addEvent({
-                delay: 1000,
-                callback: ()=> {npc222.pause = false;},
-                loop: false
-            });
-        } else {
+//     dialogNext(npc222){
+//         if(npc222.convoIndex == npc222.text.length){
+//             console.log('done');
+//             this.diaBox.setAlpha(0);
+//             this.diaBoxText.setAlpha(0);
+//             npc222.bubble.setAlpha(0);
+//             npc222.convoIndex = 0;
+//             this.player.canMove = true;
+//             this.time.addEvent({
+//                 delay: 1000,
+//                 callback: ()=> {npc222.pause = false;},
+//                 loop: false
+//             });
+//         } else {
 
-            this.diaBox.setAlpha(1);
-            this.diaBoxText.setAlpha(1);
-            npc222.bubble.setAlpha(1);
-            if(npc222.text[npc222.convoIndex].self){ // enable portraits
-                npc222.self.setAlpha(1);
-            } else {
-                npc222.npcPort.setAlpha(1);
-            }
-            this.player.canMove = false;
+//             this.diaBox.setAlpha(1);
+//             this.diaBoxText.setAlpha(1);
+//             npc222.bubble.setAlpha(1);
+//             if(npc222.text[npc222.convoIndex].self){ // enable portraits
+//                 npc222.self.setAlpha(1);
+//             } else {
+//                 npc222.npcPort.setAlpha(1);
+//             }
+//             this.player.canMove = false;
 
-            // Split the text into individual words
-            let words = npc222.text[npc222.convoIndex].text.split(" ");
-            this.diaBoxText.text = "";
-            let currentIndex = 0;
+//             // Split the text into individual words
+//             let words = npc222.text[npc222.convoIndex].text.split(" ");
+//             this.diaBoxText.text = "";
+//             let currentIndex = 0;
 
-            // Start displaying the text one word at a time
-            let event = this.time.addEvent({
-                delay: 100, // Delay between each word (in milliseconds)
-                callback: () => {
-                    // Check if there are more words to display
-                    if (currentIndex < words.length) {
-                        // Get the next word to display
-                        var word = words[currentIndex];
+//             // Start displaying the text one word at a time
+//             let event = this.time.addEvent({
+//                 delay: 100, // Delay between each word (in milliseconds)
+//                 callback: () => {
+//                     // Check if there are more words to display
+//                     if (currentIndex < words.length) {
+//                         // Get the next word to display
+//                         var word = words[currentIndex];
                 
-                        // Increment the current index
-                        currentIndex++;
+//                         // Increment the current index
+//                         currentIndex++;
                 
-                        // Update the text content
-                        this.diaBoxText.text = this.diaBoxText.text + " " + word;
-                    } else {
-                        // All words have been displayed, stop the event
-                        npc222.pause = false;
-                        npc222.convoIndex++;
+//                         // Update the text content
+//                         this.diaBoxText.text = this.diaBoxText.text + " " + word;
+//                     } else {
+//                         // All words have been displayed, stop the event
+//                         npc222.pause = false;
+//                         npc222.convoIndex++;
 
-                        event.remove();
-                    }
-                },
-                callbackScope: this,
-                loop: true
-            });
-        }
-    }
+//                         event.remove();
+//                     }
+//                 },
+//                 callbackScope: this,
+//                 loop: true
+//             });
+//         }
+//     }
 
     
 
-    addNPC(x,y, text, image, bubble, selfPort, NPCPort){
-        let NPC = this.add.image(x, y, image).setOrigin(0,0);
+//     addNPC(x,y, text, image, bubble, selfPort, NPCPort){
+//         let NPC = this.add.image(x, y, image).setOrigin(0,0);
         
-        let textObj = this.add.image(x+50, y-30, bubble)
-        .setOrigin(0.5,0)
-        .setScale(2)
-        .setAlpha(0);
-        //this.add.text(x+50, y-50, '...', { font: '16px Arial', fill: '#ffffff' }).setOrigin(0.5,1).setAlpha(0);
-        let textNPC = text;
-        this.npcs.add(NPC);
-        this.NPCArray.push({npc: NPC, text: textNPC, convoIndex: 0, bubble: textObj, 
-                            pause: false,
-                            self: selfPort,
-                            npcPort: NPCPort});
+//         let textObj = this.add.image(x+50, y-30, bubble)
+//         .setOrigin(0.5,0)
+//         .setScale(2)
+//         .setAlpha(0);
+//         //this.add.text(x+50, y-50, '...', { font: '16px Arial', fill: '#ffffff' }).setOrigin(0.5,1).setAlpha(0);
+//         let textNPC = text;
+//         this.npcs.add(NPC);
+//         this.NPCArray.push({npc: NPC, text: textNPC, convoIndex: 0, bubble: textObj, 
+//                             pause: false,
+//                             self: selfPort,
+//                             npcPort: NPCPort});
 
-        //console.log(this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == NPC)].text.text);
-    }
+//         //console.log(this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == NPC)].text.text);
+//     }
 
-    update(){
-        this.player.update();
-    }
+//     update(){
+//         this.player.update();
+//     }
 
-}
+// }
 
-class Veteran extends Phaser.Scene {
-    constructor() {
-        super('Veteran');
-    }
+// class Veteran extends Phaser.Scene {
+//     constructor() {
+//         super('Veteran');
+//     }
 
-    preload(){
-        this.load.image('tiles', 'assets/lower/bridgeMap.png');
-        this.load.tilemapCSV('map', 'assets/lower/ground.csv');
+//     preload(){
+//         this.load.image('tiles', 'assets/lower/bridgeMap.png');
+//         this.load.tilemapCSV('map', 'assets/lower/ground.csv');
 
-        this.load.image('houseTiles', 'assets/lower/houses.png');
-        this.load.tilemapCSV('houseMap', 'assets/lower/house.csv');
-    }
+//         this.load.image('houseTiles', 'assets/lower/houses.png');
+//         this.load.tilemapCSV('houseMap', 'assets/lower/house.csv');
+//     }
 
-    create(){
+//     create(){
 
-        // create map
-        let map = this.make.tilemap({ key: 'map', tileWidth: 100, tileHeight: 100 });
-        let tileset = map.addTilesetImage('tiles', null, 100,100);
-        let layer = map.createLayer(0, tileset, 0, 0);
+//         // create map
+//         let map = this.make.tilemap({ key: 'map', tileWidth: 100, tileHeight: 100 });
+//         let tileset = map.addTilesetImage('tiles', null, 100,100);
+//         let layer = map.createLayer(0, tileset, 0, 0);
 
-        let map2 = this.make.tilemap({ key: 'houseMap', tileWidth: 100, tileHeight: 100 });
-        let houseTileset = map2.addTilesetImage('houseTiles', null, 100,100);
-        let layer2 = map2.createLayer(0, houseTileset, 0, 0);
-        
-
-        // create camera
-        let cam2 = this.cameras.add(965,0,960,1080);
-        //cam.setViewport(800,0,800,1000);
-        cam2.setBackgroundColor(0x002244);
-        cam2.zoom = 1.9;
-        //this.cameras.main = cam2;
-        this.cameras.main.setVisible(false);
-        cam2.setBounds(0, 0, 1920, 1080);
-        this.addFullScreen();
-
-        //create player
-        this.player = new VeteranPlayer(this, 500, 300, 'vet');
-        
-        // follow camera
-        cam2.startFollow(this.player, true, 0.05, 0.05);
-
-        // create world
-        // this.walls = this.physics.add.staticGroup();
-        // let square = this.add.image(600,100, 'veteranHouse').setOrigin(0,0).setScale(3);
-        // let wall = this.add.rectangle(50,500,1600,100, 0xaa0000).setOrigin(0,0);
-        // this.walls.add(wall);
-        // this.walls.add(square);
-
-        this.door = this.add.rectangle(0,300,100,100, 0xaaaa00).setOrigin(0,0);
-        this.physics.add.existing(this.door);
-        
-        this.npcs = this.physics.add.staticGroup();
-        this.NPCArray = [];
-        this.addNPC(600,400, "hi", '0xaaaaee');
-        this.addNPC(400,200, "yo", '0xeeaaaa');
-
-        // add physics
-        // Enable collision for specific tiles
-        layer2.setCollisionByExclusion([-1], true, layer2);
-        layer2.setDepth(5);
-
-        //layer2.setCollision([4, 5, 6, 2, 3, 0, 1, 20, 21, 22, 18, 19, 16, 17, 2, 3, 18, 19, 4, 5, 6, 20, 21, 22]);
-        this.player.body.setSize(20,20);//, false).setOffset(50,50);
-        // Set up colliders for the layer
-        //this.physics.world.setBounds(0, 0, layer2.widthInPixels, layer2.heightInPixels);
-        this.physics.add.collider(this.player, layer2, (player, tile) => {
-            console.log('player' + this.player.y + " tile " + tile.y * 100);
-            if (this.player.y < tile.y * 100) {
-                this.player.setDepth(0);  // Render player underneath the tiles
-            } else {
-                this.player.setDepth(10);  // Render player above the tiles
-            }
-        });
+//         let map2 = this.make.tilemap({ key: 'houseMap', tileWidth: 100, tileHeight: 100 });
+//         let houseTileset = map2.addTilesetImage('houseTiles', null, 100,100);
+//         let layer2 = map2.createLayer(0, houseTileset, 0, 0);
         
 
-        // Customizing tile properties for collision
-        //layer.setTileLocationCallback(x, y, width, height, callback, context);
+//         // create camera
+//         let cam2 = this.cameras.add(965,0,960,1080);
+//         //cam.setViewport(800,0,800,1000);
+//         cam2.setBackgroundColor(0x002244);
+//         cam2.zoom = 1.9;
+//         //this.cameras.main = cam2;
+//         this.cameras.main.setVisible(false);
+//         cam2.setBounds(0, 0, 1920, 1080);
+//         this.addFullScreen();
 
-        this.physics.add.collider(this.player, this.walls);
-
-        this.physics.add.collider(this.player, this.door, ()=>{
-            this.game.gameOptions.veteranLocation = 'desert';
-            console.log('to desert!');
-            this.scene.stop();
-
-            if(this.scene.isActive('Desert'))
-                this.scene.resume('Desert');
-            else
-                this.scene.launch('Desert');
-
-        });
-
-
-        // // Step 4: Listen for 'e' key press event
-        this.physics.add.overlap(this.player, this.npcs, (player, npc)=>{
-            //console.log('touching');
-
-            if (this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M).isDown){
-                //console.log('interact');
-                this.tweens.add({
-                    targets: this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)].text,
-                    alpha: 1,
-                    duration: 500, // Fade-in duration in milliseconds
-                    //delay: 500, // Delay before the fade-in animation starts in milliseconds
-                    hold: 3000, // Text will remain visible for 3 seconds
-                    onComplete: () => {
-                        this.tweens.add({
-                          targets:  this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)].text,
-                          alpha: 0,
-                          duration: 1000,
-                          delay: 0
-                        });
-                    }
-                  });
-            }
-
-        });
-
-    }
-
-    update(){
-        this.player.update();
-    }
-
-    addNPC(x,y, text, color){
-        let NPC = this.add.rectangle(x,y,100,100, color).setOrigin(0,0);
+//         //create player
+//         this.player = new VeteranPlayer(this, 500, 300, 'vet');
         
-        let textObj = this.add.text(x+50, y-50, text, { font: '16px Arial', fill: '#ffffff' }).setOrigin(0.5,1).setAlpha(0);
+//         // follow camera
+//         cam2.startFollow(this.player, true, 0.05, 0.05);
+
+//         // create world
+//         // this.walls = this.physics.add.staticGroup();
+//         // let square = this.add.image(600,100, 'veteranHouse').setOrigin(0,0).setScale(3);
+//         // let wall = this.add.rectangle(50,500,1600,100, 0xaa0000).setOrigin(0,0);
+//         // this.walls.add(wall);
+//         // this.walls.add(square);
+
+//         this.door = this.add.rectangle(0,300,100,100, 0xaaaa00).setOrigin(0,0);
+//         this.physics.add.existing(this.door);
         
-        this.npcs.add(NPC);
-        this.NPCArray.push({npc: NPC, text: textObj});
+//         this.npcs = this.physics.add.staticGroup();
+//         this.NPCArray = [];
+//         this.addNPC(600,400, "hi", '0xaaaaee');
+//         this.addNPC(400,200, "yo", '0xeeaaaa');
 
-        //console.log(this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == NPC)].text.text);
-    }
+//         // add physics
+//         // Enable collision for specific tiles
+//         layer2.setCollisionByExclusion([-1], true, layer2);
+//         layer2.setDepth(5);
 
-    addFullScreen(){
-        this.input.keyboard.on('keydown-ESC',  () => {
-            // Set the zoom level to 0.8
-            this.scale.setZoom(0.8);
-        }, this);
-        this.add.text(600,800, "FULLSCREEN")
-            .setScrollFactor(0)
-            .setStyle({ fontSize: `20px` })
-            .setInteractive({useHandCursor: true})
-            .on('pointerdown', () => {
-                if (this.scale.isFullscreen) {
-                    this.scale.stopFullscreen();
-                    this.scale.setZoom(0.8);
-                } else {
-                    this.scale.startFullscreen();
-                    this.scale.setZoom(1);
-                }
-        });
-    }
+//         //layer2.setCollision([4, 5, 6, 2, 3, 0, 1, 20, 21, 22, 18, 19, 16, 17, 2, 3, 18, 19, 4, 5, 6, 20, 21, 22]);
+//         this.player.body.setSize(20,20);//, false).setOffset(50,50);
+//         // Set up colliders for the layer
+//         //this.physics.world.setBounds(0, 0, layer2.widthInPixels, layer2.heightInPixels);
+//         this.physics.add.collider(this.player, layer2, (player, tile) => {
+//             console.log('player' + this.player.y + " tile " + tile.y * 100);
+//             if (this.player.y < tile.y * 100) {
+//                 this.player.setDepth(0);  // Render player underneath the tiles
+//             } else {
+//                 this.player.setDepth(10);  // Render player above the tiles
+//             }
+//         });
+        
 
-}
+//         // Customizing tile properties for collision
+//         //layer.setTileLocationCallback(x, y, width, height, callback, context);
+
+//         this.physics.add.collider(this.player, this.walls);
+
+//         this.physics.add.collider(this.player, this.door, ()=>{
+//             this.game.gameOptions.veteranLocation = 'desert';
+//             console.log('to desert!');
+//             this.scene.stop();
+
+//             if(this.scene.isActive('Desert'))
+//                 this.scene.resume('Desert');
+//             else
+//                 this.scene.launch('Desert');
+
+//         });
+
+
+//         // // Step 4: Listen for 'e' key press event
+//         this.physics.add.overlap(this.player, this.npcs, (player, npc)=>{
+//             //console.log('touching');
+
+//             if (this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M).isDown){
+//                 //console.log('interact');
+//                 this.tweens.add({
+//                     targets: this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)].text,
+//                     alpha: 1,
+//                     duration: 500, // Fade-in duration in milliseconds
+//                     //delay: 500, // Delay before the fade-in animation starts in milliseconds
+//                     hold: 3000, // Text will remain visible for 3 seconds
+//                     onComplete: () => {
+//                         this.tweens.add({
+//                           targets:  this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == npc)].text,
+//                           alpha: 0,
+//                           duration: 1000,
+//                           delay: 0
+//                         });
+//                     }
+//                   });
+//             }
+
+//         });
+
+//     }
+
+//     update(){
+//         this.player.update();
+//     }
+
+//     addNPC(x,y, text, color){
+//         let NPC = this.add.rectangle(x,y,100,100, color).setOrigin(0,0);
+        
+//         let textObj = this.add.text(x+50, y-50, text, { font: '16px Arial', fill: '#ffffff' }).setOrigin(0.5,1).setAlpha(0);
+        
+//         this.npcs.add(NPC);
+//         this.NPCArray.push({npc: NPC, text: textObj});
+
+//         //console.log(this.NPCArray[this.NPCArray.findIndex(obj => obj.npc == NPC)].text.text);
+//     }
+
+//     addFullScreen(){
+//         this.input.keyboard.on('keydown-ESC',  () => {
+//             // Set the zoom level to 0.8
+//             this.scale.setZoom(0.8);
+//         }, this);
+//         this.add.text(600,800, "FULLSCREEN")
+//             .setScrollFactor(0)
+//             .setStyle({ fontSize: `20px` })
+//             .setInteractive({useHandCursor: true})
+//             .on('pointerdown', () => {
+//                 if (this.scale.isFullscreen) {
+//                     this.scale.stopFullscreen();
+//                     this.scale.setZoom(0.8);
+//                 } else {
+//                     this.scale.startFullscreen();
+//                     this.scale.setZoom(1);
+//                 }
+//         });
+//     }
+
+// }
 
 class DoubleScene extends Phaser.Scene {
     constructor(key,name, coords1, coords2) {
@@ -476,6 +476,24 @@ class DoubleScene extends Phaser.Scene {
         // add NPCS
         this.npcs = this.physics.add.staticGroup();
         this.NPCArray = [];
+
+        this.positions = [{'name' : "desert1", coord: [500,200]},
+                        {'name' : "NoviceHouse", coord: [200,400]},
+                        {'name' : "City", coord: [400,400]},
+                        {'name' : "Town", coord: [1750,400]},
+                        {'name' : "Town2", coord: [950,700]},
+                        {'name' : "desert2", coord: [150,500]},
+                        {'name' : "UndergroundMine", coord: [700,550]}];
+
+        console.log(this.game.gameOptions.novPrev);
+        let novPos = this.positions[this.positions.findIndex(obj => obj.name == this.game.gameOptions.novPrev)];
+        let vetPos = this.positions[this.positions.findIndex(obj => obj.name == this.game.gameOptions.vetPrev)];
+
+        if(novPos)
+            this.p1Cords = novPos.coord;
+        
+        if(vetPos)
+            this.p2Cords = vetPos.coord;
     }
 
     create(){
@@ -1038,6 +1056,7 @@ class NoviceHouse extends DoubleScene {
             });
 
             this.physics.add.collider(this.player, this.door, ()=>{
+                this.game.gameOptions.novPrev = 'NoviceHouse';
                 this.game.gameOptions.noviceLocation = 'City';
                 console.log('to City!');
                 this.scene.stop();
@@ -1127,6 +1146,7 @@ class City extends DoubleScene {
             });
 
             this.physics.add.collider(this.player, this.door, ()=>{
+                this.game.gameOptions.novPrev = 'City';
                 this.game.gameOptions.noviceLocation = 'desert';
                 console.log('to desert!');
                 this.scene.stop();
@@ -1230,6 +1250,7 @@ class UndergroundMine extends DoubleScene {
             });
 
             this.physics.add.overlap(this.player, this.door, ()=>{
+                this.game.gameOptions.novPrev = 'UndergroundMine';
                 this.game.gameOptions.noviceLocation = 'Town';
                 console.log('to Town!');
                 if (this.game.gameOptions.veteranLocation != 'UndergroundMine')
@@ -1265,6 +1286,7 @@ class UndergroundMine extends DoubleScene {
             });
 
             this.physics.add.overlap(this.player2, this.door, ()=>{
+                this.game.gameOptions.vetPrev = 'UndergroundMine';
                 this.game.gameOptions.veteranLocation = 'Town';
                 console.log('to Town!');
                 if (this.game.gameOptions.noviceLocation != 'UndergroundMine')
@@ -1404,6 +1426,7 @@ class Desert extends DoubleScene {
             });
 
             this.physics.add.overlap(this.player, this.door, ()=>{
+                this.game.gameOptions.novPrev = 'desert2';
                 this.game.gameOptions.noviceLocation = 'Town';
                 console.log('to Town!');
                 if (this.game.gameOptions.veteranLocation != 'desert')
@@ -1423,6 +1446,7 @@ class Desert extends DoubleScene {
             });
 
             this.physics.add.overlap(this.player, this.door2, ()=>{
+                this.game.gameOptions.novPrev = 'desert1';
                 this.game.gameOptions.noviceLocation = 'City';
                 console.log('to City!');
                 if (this.game.gameOptions.veteranLocation != 'desert')
@@ -1466,6 +1490,7 @@ class Desert extends DoubleScene {
             });
 
             this.physics.add.overlap(this.player2, this.door, ()=>{
+                this.game.gameOptions.vetPrev = 'desert2';
                 this.game.gameOptions.veteranLocation = 'Town';
                 console.log('to Town!');
                 if (this.game.gameOptions.noviceLocation != 'desert')
@@ -1600,6 +1625,7 @@ class Town extends DoubleScene {
             });
 
             this.physics.add.overlap(this.player, this.door, ()=>{
+                this.game.gameOptions.novPrev = 'Town2';
                 this.game.gameOptions.noviceLocation = 'UndergroundMine';
                 console.log('to mines!');
                 if (this.game.gameOptions.veteranLocation != 'Town')
@@ -1619,14 +1645,15 @@ class Town extends DoubleScene {
             });
 
             this.physics.add.overlap(this.player, this.door2, ()=>{
+                this.game.gameOptions.novPrev = 'Town';
                 this.game.gameOptions.noviceLocation = 'desert';
                 console.log('to desert!');
                 if (this.game.gameOptions.veteranLocation != 'Town')
                     this.scene.stop();
                 else {
-                    this.player2.destroy();
-                    this.p2Init = false;
-                    this.cam2.setVisible(false);
+                    this.player.destroy();
+                    this.p1Init = false;
+                    this.cam.setVisible(false);
                 }
 
                 if(this.scene.isActive('Desert'))
@@ -1670,6 +1697,7 @@ class Town extends DoubleScene {
             });
 
             this.physics.add.overlap(this.player2, this.door, ()=>{
+                this.game.gameOptions.vetPrev = 'Town2';
                 this.game.gameOptions.veteranLocation = 'UndergroundMine';
                 console.log('to mines!');
                 if (this.game.gameOptions.noviceLocation != 'Town')
@@ -1688,6 +1716,7 @@ class Town extends DoubleScene {
             });
 
             this.physics.add.overlap(this.player2, this.door2, ()=>{
+                this.game.gameOptions.vetPrev = 'Town';
                 this.game.gameOptions.veteranLocation = 'desert';
                 console.log('to desert!');
                 if (this.game.gameOptions.noviceLocation != 'Town')
@@ -1725,7 +1754,7 @@ let config = {
             //gravity: { y: 600 }
         }
     },
-    scene: [Start, Novice, Veteran, Desert, NoviceHouse, UndergroundMine, City, Town],
+    scene: [Start, Desert, NoviceHouse, UndergroundMine, City, Town],
     checkpt: false,
     pixelArt: true,
 }
@@ -1734,5 +1763,7 @@ let game = new Phaser.Game(config);
 
 game.gameOptions = {
     noviceLocation: 'NoviceHouse',
+    novPrev: null,
     veteranLocation: 'UndergroundMine',
+    vetPrev: null
 }
