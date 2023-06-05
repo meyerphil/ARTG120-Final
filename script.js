@@ -960,7 +960,7 @@ class DoubleScene extends Phaser.Scene {
         if(image)
             NPC = this.add.image(x, y, image).setOrigin(0,0).setDepth(7);
         else
-            NPC = this.add.rectangle(x-10,y-10,120,120, "0x000000").setOrigin(0,0).setAlpha(0.5).setDepth(7);
+            NPC = this.add.rectangle(x-10,y-10,120,120, "0x000000").setOrigin(0,0).setAlpha(0).setDepth(7);
 
         let textObj = this.add.image(x+50, y-30, bubble)
         .setOrigin(0.5,0)
@@ -1221,9 +1221,9 @@ class UndergroundMine extends DoubleScene {
                                 null, 'memBubble', 
                                 {self: this.novicePortrait}, {self: this.veteranPortrait});
         
-        super.addNPC(700,600, [{self: true, text: 'This is what I deserve, it’s owed to me.'}],
-                            [{self: true, text: 'These rocks litter the ground and fill the mines with their foreboding glow.'},
-                            {self: true, text: 'It’s not best for me to stay around them for too long.'}],
+        super.addNPC(700,600, [{self: true, text: 'A beautiful purple rock to add to my collection.'}],
+                            [{self: true, text: 'I harvested these rocks for years.'},
+                            {self: true, text: 'Somehow there is still a demand for them.'}],
                                 null, 'memBubble', 
                                 {self: this.novicePortrait}, {self: this.veteranPortrait});
 
@@ -1240,12 +1240,18 @@ class UndergroundMine extends DoubleScene {
 
             this.player.body.setSize(20,20);
             this.physics.add.collider(this.player, this.layer);
-            this.physics.add.collider(this.player, this.layer2, (player, tile) => {
-                console.log('player' + this.player.y + " tile " + tile.y * 100);
+            this.physics.add.overlap(this.player, this.layer2, (player, tile) => {
+                //console.log(tile);
+                //console.log('player' + this.player.y + " tile " + tile.y * 100);
                 if (this.player.y < tile.y * 100) {
                     this.player.setDepth(0);  // Render player underneath the tiles
                 } else {
                     this.player.setDepth(10);  // Render player above the tiles
+                }
+                if (this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E).isDown && (tile.index == 2 || tile.index == 3)){
+                    this.layer2.removeTileAt(tile.x,tile.y);
+                    this.game.gameOptions.rocksCollected++;
+                    console.log('total rocks:' + this.game.gameOptions.rocksCollected);
                 }
             });
 
@@ -1768,5 +1774,6 @@ game.gameOptions = {
     noviceLocation: 'NoviceHouse',
     novPrev: null,
     veteranLocation: 'UndergroundMine',
-    vetPrev: null
+    vetPrev: null,
+    rocksCollected: 0,
 }
