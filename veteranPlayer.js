@@ -18,7 +18,7 @@ export default class VeteranPlayer extends Phaser.Physics.Arcade.Sprite {
         // create health
         this.health = [];
         this.maxHealth = 3;
-        this.moveSpeed = 150;
+        this.moveSpeed = 500;
         this.canMove = true;
         
         // create animations
@@ -83,7 +83,7 @@ export default class VeteranPlayer extends Phaser.Physics.Arcade.Sprite {
                 this.anims.play('down', true);
                 this.setVelocityX(0);
             }
-            else
+            else if (this.body)
             {
                 this.setVelocityY(0);
                 this.setVelocityX(0);

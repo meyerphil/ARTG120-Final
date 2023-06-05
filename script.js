@@ -492,14 +492,14 @@ class DoubleScene extends Phaser.Scene {
         
 
     }
-
+    
     update(){
-        if(this.player)
+        if(this.player  && this.player.body)
             this.player.update();
         else if(this.game.gameOptions.noviceLocation == this.sceneName)
             this.createNovice();
 
-        if(this.player2)
+        if(this.player2  && this.player2.body )
             this.player2.update();
         else if(this.game.gameOptions.veteranLocation == this.sceneName)
             this.createVeteran();
@@ -514,7 +514,8 @@ class DoubleScene extends Phaser.Scene {
         this.cam.setBounds(0, 0, 1900, 1000);
         // cam.scrollY +=100;
         //this.cameras.main = cam;
-        this.cameras.main.setVisible(false);
+        if(this.cameras.main)
+            this.cameras.main.setVisible(false);
         
 
         // create player
@@ -560,7 +561,8 @@ class DoubleScene extends Phaser.Scene {
         this.cam2.zoom = 1.9;
         this.cam2.setBounds(0, 0, 1900, 1000);
         //this.cameras.main = cam2;
-        this.cameras.main.setVisible(false);
+        if(this.cameras.main)
+            this.cameras.main.setVisible(false);
         this.addFullScreen();
 
         
@@ -940,7 +942,7 @@ class DoubleScene extends Phaser.Scene {
         if(image)
             NPC = this.add.image(x, y, image).setOrigin(0,0).setDepth(7);
         else
-            NPC = this.add.rectangle(x-10,y-10,120,120, "0x000000").setOrigin(0,0).setAlpha(0).setDepth(7);
+            NPC = this.add.rectangle(x-10,y-10,120,120, "0x000000").setOrigin(0,0).setAlpha(0.5).setDepth(7);
 
         let textObj = this.add.image(x+50, y-30, bubble)
         .setOrigin(0.5,0)
@@ -1020,7 +1022,96 @@ class NoviceHouse extends DoubleScene {
 
         super.update();
 
-        if(this.player && !this.p1Init){
+        if(this.player && this.player.body && !this.p1Init){
+            this.cam.setBackgroundColor(0x000000);
+            this.p1Init = true;
+
+            this.player.body.setSize(20,75);
+            this.physics.add.collider(this.player, this.layer);
+            this.physics.add.collider(this.player, this.layer2, (player, tile) => {
+                //console.log('player' + this.player.y + " tile " + tile.y * 100);
+                if (this.player.y < tile.y * 100) {
+                    this.player.setDepth(0);  // Render player underneath the tiles
+                } else {
+                    this.player.setDepth(10);  // Render player above the tiles
+                }
+            });
+
+            this.physics.add.collider(this.player, this.door, ()=>{
+                this.game.gameOptions.noviceLocation = 'City';
+                console.log('to City!');
+                this.scene.stop();
+                if(this.scene.isActive('City'))
+                    this.scene.resume('City');
+                else
+                    this.scene.launch('City');
+    
+            });
+
+        }
+        
+    }
+}
+
+class City extends DoubleScene {
+    constructor() {
+        super('City', 'City',[150,400]);
+    }
+    
+    preload(){
+        this.load.image('cityTiles', 'assets/City/CitySheet.png');
+        this.load.tilemapCSV('city-ground', 'assets/City/City_ground.csv');
+        this.load.tilemapCSV('city-objects', 'assets/City/City_objects.csv');
+    }
+
+    create(){
+        // create map
+        let map = this.make.tilemap({ key: 'city-ground', tileWidth: 100, tileHeight: 100 });
+        let tileset = map.addTilesetImage('cityTiles', null, 100,100);
+        this.layer = map.createLayer(0, tileset, 0, 0);
+
+        let map2 = this.make.tilemap({ key: 'city-objects', tileWidth: 100, tileHeight: 100 });
+        //let houseTileset = map2.addTilesetImage('noviceRoomTiles', null, 100,100);
+        this.layer2 = map2.createLayer(0, tileset, 0, 0);
+        
+        //hi
+        //this.layer2.removeTileAt(tile.x,tile.y); remove test
+
+
+        this.door = this.add.rectangle(500,310,200,100, 0xaaaaaa).setOrigin(0,0).setAlpha(0);
+        this.physics.add.existing(this.door);
+
+        // add physics
+        
+        // Enable collision for specific tiles
+        this.layer2.setCollisionByExclusion([-1]);
+        this.layer2.setDepth(5);
+        this.layer.setCollision([5]);
+
+        this.p1Init = false;
+
+        // add dialog
+        super.initDialogNovice();
+        super.addNPC(700,400, [{self: false, text: 'I don’t understand why they are even complaining. A strike is unnecessary.'},
+                                {self: false, text: 'They enjoy the work. If you ask me, I should be the one to complain.'},
+                                {self: true, text: 'ok.'}], 
+                                null,
+                                'npcCiv1', 'civBubble', 
+                                {self: this.novicePortrait, npc: this.npcCiv1Portrait}, null);
+
+        super.addNPC(300,600, [{self: false, text: 'They should put in more effort instead of using the strike as an excuse to get out of work.'}, 
+                                {self: false, text: 'If they really want to be respected they should work.'}],
+                                null,
+                                'npcCiv2', 'civBubble', 
+                                {self: this.novicePortrait, npc: this.npcCiv2Portrait}, null);
+
+    }
+
+    update(){
+
+        super.update();
+
+        if(this.player && this.player.body && !this.p1Init){
             this.cam.setBackgroundColor(0x000000);
             this.p1Init = true;
 
@@ -1053,7 +1144,7 @@ class NoviceHouse extends DoubleScene {
 
 class UndergroundMine extends DoubleScene {
     constructor() {
-        super('UndergroundMine', 'UndergroundMine',null, [950,250]);
+        super('UndergroundMine', 'UndergroundMine',[950,500], [950,250]);
     }
     
     preload(){
@@ -1103,16 +1194,32 @@ class UndergroundMine extends DoubleScene {
                                 'npcVet1', 'memBubble', 
                                 {self: this.novicePortrait, npc: this.npcVet1Portrait}, {self: this.veteranPortrait, npc: this.npcVet1Portrait2});
 
+        //rocks
+        super.addNPC(700,200, [{self: true, text: 'This is what I deserve, it’s owed to me.'}],
+                            [{self: true, text: 'These rocks litter the ground and fill the mines with their foreboding glow.'},
+                            {self: true, text: 'It’s not best for me to stay around them for too long.'}],
+                                null, 'memBubble', 
+                                {self: this.novicePortrait}, {self: this.veteranPortrait});
+        
+        super.addNPC(700,600, [{self: true, text: 'This is what I deserve, it’s owed to me.'}],
+                            [{self: true, text: 'These rocks litter the ground and fill the mines with their foreboding glow.'},
+                            {self: true, text: 'It’s not best for me to stay around them for too long.'}],
+                                null, 'memBubble', 
+                                {self: this.novicePortrait}, {self: this.veteranPortrait});
+
     }
 
     update(){
 
         super.update();
 
-        if(this.player && !this.p1Init){
+        if(this.player && this.player.body && !this.p1Init){
             this.p1Init = true;
 
+            this.cam.setBackgroundColor(0x000000);
+
             this.player.body.setSize(20,20);
+            this.physics.add.collider(this.player, this.layer);
             this.physics.add.collider(this.player, this.layer2, (player, tile) => {
                 console.log('player' + this.player.y + " tile " + tile.y * 100);
                 if (this.player.y < tile.y * 100) {
@@ -1122,9 +1229,26 @@ class UndergroundMine extends DoubleScene {
                 }
             });
 
+            this.physics.add.overlap(this.player, this.door, ()=>{
+                this.game.gameOptions.noviceLocation = 'Town';
+                console.log('to Town!');
+                if (this.game.gameOptions.veteranLocation != 'UndergroundMine')
+                    this.scene.stop();
+                else {
+                    this.player.destroy();
+                    this.p1Init = false;
+                    this.cam.setVisible(false);
+                }
+                if(this.scene.isActive('Town'))
+                    this.scene.resume('Town');
+                else
+                    this.scene.launch('Town');
+    
+            });
+
         }
 
-        if(this.player2 && !this.p2Init){
+        if(this.player2 && this.player2.body && !this.p2Init){
             this.p2Init = true;
             this.cam2.setBackgroundColor(0x000000);
 
@@ -1140,14 +1264,21 @@ class UndergroundMine extends DoubleScene {
                 }
             });
 
-            this.physics.add.collider(this.player2, this.door, ()=>{
-                this.game.gameOptions.veteranLocation = 'desert';
-                console.log('to desert!');
-                this.scene.stop();
-                if(this.scene.isActive('Desert'))
-                    this.scene.resume('Desert');
+            this.physics.add.overlap(this.player2, this.door, ()=>{
+                this.game.gameOptions.veteranLocation = 'Town';
+                console.log('to Town!');
+                if (this.game.gameOptions.noviceLocation != 'UndergroundMine')
+                    this.scene.stop();
+                else {
+                    this.player2.destroy();
+                    this.p2Init = false;
+                    this.cam2.setVisible(false);
+                }
+
+                if(this.scene.isActive('Town'))
+                    this.scene.resume('Town');
                 else
-                    this.scene.launch('Desert');
+                    this.scene.launch('Town');
     
             });
 
@@ -1158,13 +1289,14 @@ class UndergroundMine extends DoubleScene {
 
 class Desert extends DoubleScene {
     constructor() {
-        super('Desert', 'desert');
+        super('Desert', 'desert', [400, 400],[1700, 400]);
     }
     
     preload(){
         this.load.image('desertTiles', 'assets/desert/bridgeMap.png');
         this.load.tilemapCSV('desert-ground', 'assets/desert/desert_ground.csv');
         this.load.tilemapCSV('desert-objects', 'assets/desert/desert_objects.csv');
+        this.load.tilemapCSV('desert-elevator', 'assets/desert/desert_elevator.csv');
     }
 
     create(){
@@ -1177,46 +1309,57 @@ class Desert extends DoubleScene {
         let houseTileset = map2.addTilesetImage('desertTiles', null, 100,100);
         this.layer2 = map2.createLayer(0, houseTileset, 0, 0);
 
+        let map3 = this.make.tilemap({ key: 'desert-elevator', tileWidth: 100, tileHeight: 100 });
+        let ele = map2.addTilesetImage('cityTiles', null, 100,100);
+        this.layer3 = map3.createLayer(0, ele, 0, 0);
+
+        this.door = this.add.rectangle(1800,400,100,100, 0xaaaaaa).setOrigin(0,0);
+        this.physics.add.existing(this.door);
+
+        this.door2 = this.add.rectangle(210,400,100,100, 0xaaaaaa).setOrigin(0,0);
+        this.physics.add.existing(this.door2);
 
         // add physics
         // Enable collision for specific tiles
         this.layer2.setCollisionByExclusion([-1]);
         this.layer2.setDepth(5);
+        this.layer3.setCollisionByExclusion([-1]);
+        this.layer3.setDepth(20);
 
         this.p1Init = false;
         this.p2Init = false;
 
         //this.addNPC(300,100, '...', '0xaaaaee');
-        super.initDialogNovice();
-        super.addNPC(500,300, [{self: false, text: 'I don’t understand why they are even complaining. A strike is unnecessary.'},
-                                {self: false, text: 'They enjoy the work. If you ask me, I should be the one to complain.'},
-                                {self: true, text: 'ok.'}], 
-                                null,
-                                null, 'civBubble', 
-                                {self: this.novicePortrait, npc: this.npcCiv1Portrait}, null);
+        // super.initDialogNovice();
+        // super.addNPC(500,300, [{self: false, text: 'I don’t understand why they are even complaining. A strike is unnecessary.'},
+        //                         {self: false, text: 'They enjoy the work. If you ask me, I should be the one to complain.'},
+        //                         {self: true, text: 'ok.'}], 
+        //                         null,
+        //                         null, 'civBubble', 
+        //                         {self: this.novicePortrait, npc: this.npcCiv1Portrait}, null);
 
-        super.addNPC(300,600, [{self: false, text: 'They should put in more effort instead of using the strike as an excuse to get out of work.'}, 
-                                {self: false, text: 'If they really want to be respected they should work.'}],
-                                null,
-                                'npcCiv2', 'civBubble', 
-                                {self: this.novicePortrait, npc: this.npcCiv2Portrait}, null);
+        // super.addNPC(300,600, [{self: false, text: 'They should put in more effort instead of using the strike as an excuse to get out of work.'}, 
+        //                         {self: false, text: 'If they really want to be respected they should work.'}],
+        //                         null,
+        //                         'npcCiv2', 'civBubble', 
+        //                         {self: this.novicePortrait, npc: this.npcCiv2Portrait}, null);
 
-        super.initDialogVeteran();
+        // super.initDialogVeteran();
 
-        super.addNPC(1000,300, [{self: false, text: 'Ello mate'}, 
-                                {self: true, text: 'oi.'}],
-                                [{self: false, text: 'jimbo went on strike for milk'}, 
-                                {self: true, text: 'what haponm.'}],
-                                'npcVet2', 'memBubble', 
-                                {self: this.novicePortrait, npc: this.npcVet2Portrait}, {self: this.veteranPortrait, npc: this.npcVet2Portrait2});
+        // super.addNPC(1000,300, [{self: false, text: 'Ello mate'}, 
+        //                         {self: true, text: 'oi.'}],
+        //                         [{self: false, text: 'jimbo went on strike for milk'}, 
+        //                         {self: true, text: 'what haponm.'}],
+        //                         'npcVet2', 'memBubble', 
+        //                         {self: this.novicePortrait, npc: this.npcVet2Portrait}, {self: this.veteranPortrait, npc: this.npcVet2Portrait2});
 
-        super.addNPC(1500,400, [{self: false, text: 'Who tf are you'}, 
-                                {self: true, text: 'idk bruh.'}],
+        // super.addNPC(1500,400, [{self: false, text: 'Who tf are you'}, 
+        //                         {self: true, text: 'idk bruh.'}],
 
-                                [{self: false, text: 'cactus Fred hit me :('}, 
-                                {self: true, text: 'Prickly pear beware amigo.'}],
-                                'npcVet1', 'memBubble', 
-                                {self: this.novicePortrait, npc: this.npcVet1Portrait}, {self: this.veteranPortrait, npc: this.npcVet1Portrait2});
+        //                         [{self: false, text: 'cactus Fred hit me :('}, 
+        //                         {self: true, text: 'Prickly pear beware amigo.'}],
+        //                         'npcVet1', 'memBubble', 
+        //                         {self: this.novicePortrait, npc: this.npcVet1Portrait}, {self: this.veteranPortrait, npc: this.npcVet1Portrait2});
         
 
     }
@@ -1225,9 +1368,10 @@ class Desert extends DoubleScene {
 
         super.update();
 
-        if(this.player && !this.p1Init){
+        if(this.player && this.player.body && !this.p1Init){
             this.p1Init = true;
 
+        
             this.player.body.setSize(20,20);
             this.physics.add.collider(this.player, this.layer2, (player, tile) => {
                 console.log('player' + this.player.y + " tile " + tile.y * 100);
@@ -1238,9 +1382,54 @@ class Desert extends DoubleScene {
                 }
             });
 
+            this.physics.add.collider(this.player, this.layer3, (player, tile) => {
+                console.log('player' + this.player.y + " tile " + tile.y * 100);
+                if (this.player.y < tile.y * 100) {
+                    this.player.setDepth(0);  // Render player underneath the tiles
+                } else {
+                    this.player.setDepth(10);  // Render player above the tiles
+                }
+            });
+
+            this.physics.add.overlap(this.player, this.door, ()=>{
+                this.game.gameOptions.noviceLocation = 'Town';
+                console.log('to Town!');
+                if (this.game.gameOptions.veteranLocation != 'desert')
+                    this.scene.stop();
+                else{
+                    this.player.destroy();
+                    this.p1Init = false;
+                }
+                    
+
+                if(this.scene.isActive('Town'))
+                    this.scene.resume('Town');
+                else
+                    this.scene.launch('Town');
+    
+            });
+
+            this.physics.add.overlap(this.player, this.door2, ()=>{
+                this.game.gameOptions.noviceLocation = 'City';
+                console.log('to City!');
+                if (this.game.gameOptions.veteranLocation != 'desert')
+                    this.scene.stop();
+                else{
+                    this.player.destroy();
+                    this.p1Init = false;
+                }
+                    
+
+                if(this.scene.isActive('City'))
+                    this.scene.resume('City');
+                else
+                    this.scene.launch('City');
+    
+            });
+
         }
 
-        if(this.player2 && !this.p2Init){
+        if(this.player2 && this.player2.body && !this.p2Init){
             this.p2Init = true;
 
             this.player2.body.setSize(20,20);
@@ -1251,6 +1440,252 @@ class Desert extends DoubleScene {
                 } else {
                     this.player2.setDepth(10);  // Render player above the tiles
                 }
+            });
+
+            this.physics.add.collider(this.player2, this.layer3, (player, tile) => {
+                console.log('player' + this.player2.y + " tile " + tile.y * 100);
+                if (this.player2.y < tile.y * 100) {
+                    this.player2.setDepth(0);  // Render player underneath the tiles
+                } else {
+                    this.player2.setDepth(10);  // Render player above the tiles
+                }
+            });
+
+            this.physics.add.overlap(this.player2, this.door, ()=>{
+                this.game.gameOptions.veteranLocation = 'Town';
+                console.log('to Town!');
+                if (this.game.gameOptions.noviceLocation != 'desert')
+                    this.scene.stop();
+                else {
+                    this.player2.destroy();
+                    this.p2Init = false;
+                }
+                    
+                if(this.scene.isActive('Town'))
+                    this.scene.resume('Town');
+                else
+                    this.scene.launch('Town');
+    
+            });
+
+        }
+        
+    }
+
+}
+
+class Town extends DoubleScene {
+    constructor() {
+        super('Town', 'Town', [100,550], [650,600]);
+    }
+    
+    preload(){
+        this.load.image('desertTiles', 'assets/desert/bridgeMap.png');
+        this.load.image('housesTiles', 'assets/Town/houses.png');
+        this.load.image('mineciteTiles', 'assets/Town/Miningcite.png');
+        this.load.tilemapCSV('town-ground', 'assets/Town/town_ground.csv');
+        this.load.tilemapCSV('town-objects', 'assets/Town/town_objects.csv');
+        this.load.tilemapCSV('town-houses', 'assets/Town/town_houses.csv');
+        this.load.tilemapCSV('town-mine', 'assets/Town/town_mine.csv');
+    }
+
+    create(){
+        // create map
+        let map = this.make.tilemap({ key: 'town-ground', tileWidth: 100, tileHeight: 100 });
+        let tileset = map.addTilesetImage('desertTiles', null, 100,100);
+        let layer = map.createLayer(0, tileset, 0, 0);
+
+        let map2 = this.make.tilemap({ key: 'town-houses', tileWidth: 100, tileHeight: 100 });
+        let houseTileset = map2.addTilesetImage('housesTiles', null, 100,100);
+        this.layer2 = map2.createLayer(0, houseTileset, 0, 0);
+
+        let map3 = this.make.tilemap({ key: 'town-objects', tileWidth: 100, tileHeight: 100 });
+        this.layer3 = map3.createLayer(0, tileset, 0, 0);
+
+        let map4 = this.make.tilemap({ key: 'town-mine', tileWidth: 100, tileHeight: 100 });
+        let miningTile = map4.addTilesetImage('mineciteTiles', null, 100,100);
+        this.layer4 = map4.createLayer(0, miningTile, 0, 0);
+
+        this.door = this.add.rectangle(650,405,100,100, 0xaaaaaa).setOrigin(0,0);
+        this.physics.add.existing(this.door);
+
+        this.door2 = this.add.rectangle(0,500,50,100, 0xaaaaaa).setOrigin(0,0);
+        this.physics.add.existing(this.door2);
+
+        // add physics
+        // Enable collision for specific tiles
+        this.layer2.setCollisionByExclusion([-1]);
+        this.layer2.setDepth(5);
+        this.layer3.setCollisionByExclusion([-1]);
+        this.layer3.setDepth(5);
+        this.layer4.setCollisionByExclusion([-1]);
+        this.layer4.setDepth(5);
+
+        this.p1Init = false;
+        this.p2Init = false;
+
+        super.initDialogNovice();
+        super.initDialogVeteran();
+
+        super.addNPC(400,300, [{self: false, text: '“I’m not going back to work, if you want the rock go get it yourself. What do you think going on strike means?'}, 
+                                {self: true, text: 'Fine.'}],
+                                [{self: false, text: 'They have ignored us for too long. Worked us to the bone…'},
+                                {self: false, text: 'Tomorrow they will have to listen to us… I wonder what’s going on past the roadblock.'}, 
+                                {self: true, text: 'Hopefully...'}],
+                                'npcVet2', 'memBubble', 
+                                {self: this.novicePortrait, npc: this.npcVet2Portrait}, {self: this.veteranPortrait, npc: this.npcVet2Portrait2});
+
+        super.addNPC(800,500, [{self: true, text: 'Hi! Is this where the purple rocks are coming from?'}, 
+                                {self: false, text: '...'}],
+
+                                [{self: false, text: 'Another day on strike. Let’s hope we finally get their attention today.'},
+                                {self: false, text: 'We should check on the roadblock.'}, 
+                                {self: true, text: 'There is a roadblock?'},
+                                {self: false, text: 'Yeah just down the road.'}],
+                                'npcVet1', 'memBubble', 
+                                {self: this.novicePortrait, npc: this.npcVet1Portrait}, {self: this.veteranPortrait, npc: this.npcVet1Portrait2});
+        
+
+
+    }
+
+    update(){
+
+        super.update();
+
+        if(this.player && this.player.body && !this.p1Init){
+            this.p1Init = true;
+
+        
+            this.player.body.setSize(20,20);
+            this.physics.add.collider(this.player, this.layer2, (player, tile) => {
+                console.log('player' + this.player.y + " tile " + tile.y * 100);
+                if (this.player.y < tile.y * 100) {
+                    this.player.setDepth(0);  // Render player underneath the tiles
+                } else {
+                    this.player.setDepth(10);  // Render player above the tiles
+                }
+            });
+
+            this.physics.add.collider(this.player, this.layer3, (player, tile) => {
+                console.log('player' + this.player.y + " tile " + tile.y * 100);
+                if (this.player.y < tile.y * 100) {
+                    this.player.setDepth(0);  // Render player underneath the tiles
+                } else {
+                    this.player.setDepth(10);  // Render player above the tiles
+                }
+            });
+            this.physics.add.collider(this.player, this.layer4, (player, tile) => {
+                console.log('player' + this.player.y + " tile " + tile.y * 100);
+                if (this.player.y < tile.y * 100) {
+                    this.player.setDepth(0);  // Render player underneath the tiles
+                } else {
+                    this.player.setDepth(10);  // Render player above the tiles
+                }
+            });
+
+            this.physics.add.overlap(this.player, this.door, ()=>{
+                this.game.gameOptions.noviceLocation = 'UndergroundMine';
+                console.log('to mines!');
+                if (this.game.gameOptions.veteranLocation != 'Town')
+                    this.scene.stop();
+                else{
+                    this.player.destroy();
+                    this.p1Init = false;
+                }
+                    
+
+                if(this.scene.isActive('UndergroundMine'))
+                    this.scene.resume('UndergroundMine');
+                else
+                    this.scene.launch('UndergroundMine');
+    
+            });
+
+            this.physics.add.overlap(this.player, this.door2, ()=>{
+                this.game.gameOptions.noviceLocation = 'desert';
+                console.log('to desert!');
+                if (this.game.gameOptions.veteranLocation != 'Town')
+                    this.scene.stop();
+                else {
+                    this.player2.destroy();
+                    this.p2Init = false;
+                    this.cam2.setVisible(false);
+                }
+
+                if(this.scene.isActive('Desert'))
+                    this.scene.resume('Desert');
+                else
+                    this.scene.launch('Desert');
+    
+            });
+
+        }
+
+        if(this.player2 && this.player2.body && !this.p2Init){
+            this.p2Init = true;
+
+            this.player2.body.setSize(20,20);
+            this.physics.add.collider(this.player2, this.layer2, (player, tile) => {
+                console.log('player' + this.player2.y + " tile " + tile.y * 100);
+                if (this.player2.y < tile.y * 100) {
+                    this.player2.setDepth(0);  // Render player underneath the tiles
+                } else {
+                    this.player2.setDepth(10);  // Render player above the tiles
+                }
+            });
+
+            this.physics.add.collider(this.player2, this.layer3, (player, tile) => {
+                console.log('player' + this.player2.y + " tile " + tile.y * 100);
+                if (this.player2.y < tile.y * 100) {
+                    this.player2.setDepth(0);  // Render player underneath the tiles
+                } else {
+                    this.player2.setDepth(10);  // Render player above the tiles
+                }
+            });
+
+            this.physics.add.collider(this.player2, this.layer4, (player, tile) => {
+                console.log('player' + this.player2.y + " tile " + tile.y * 100);
+                if (this.player2.y < tile.y * 100) {
+                    this.player2.setDepth(0);  // Render player underneath the tiles
+                } else {
+                    this.player2.setDepth(10);  // Render player above the tiles
+                }
+            });
+
+            this.physics.add.overlap(this.player2, this.door, ()=>{
+                this.game.gameOptions.veteranLocation = 'UndergroundMine';
+                console.log('to mines!');
+                if (this.game.gameOptions.noviceLocation != 'Town')
+                    this.scene.stop();
+                else {
+                    this.player2.destroy();
+                    this.p2Init = false;
+                }
+                    
+                if(this.scene.isActive('UndergroundMine'))
+                    this.scene.resume('UndergroundMine');
+                else
+                    this.scene.launch('UndergroundMine');
+    
+            });
+
+            this.physics.add.overlap(this.player2, this.door2, ()=>{
+                this.game.gameOptions.veteranLocation = 'desert';
+                console.log('to desert!');
+                if (this.game.gameOptions.noviceLocation != 'Town')
+                    this.scene.stop();
+                else {
+                    this.player2.destroy();
+                    this.p2Init = false;
+                    this.cam2.setVisible(false);
+                }
+
+                if(this.scene.isActive('Desert'))
+                    this.scene.resume('Desert');
+                else
+                    this.scene.launch('Desert');
+    
             });
 
         }
@@ -1273,7 +1708,7 @@ let config = {
             //gravity: { y: 600 }
         }
     },
-    scene: [Start, Novice, Veteran, Desert, NoviceHouse, UndergroundMine],
+    scene: [Start, Novice, Veteran, Desert, NoviceHouse, UndergroundMine, City, Town],
     checkpt: false,
     pixelArt: true,
 }
