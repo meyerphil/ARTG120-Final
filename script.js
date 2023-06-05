@@ -1351,7 +1351,10 @@ class Desert extends DoubleScene {
         this.p1Init = false;
         this.p2Init = false;
 
-        super.addNPC(700,200, [{self: true, text: 'Hmm, I will just go around'}],
+        super.initDialogNovice();
+        super.initDialogVeteran();
+
+        super.addNPC(900,400, [{self: true, text: 'Hmm, I will just go around'}],
                             [{self: true, text: 'The roadblock is still firmly in place. We thought this would be enough to get their attention.'},
                             {self: true, text: 'We were wrong.'}],
                                 null, 'memBubble', 
