@@ -1186,8 +1186,8 @@ class UndergroundMine extends DoubleScene {
         super.initDialogNovice();
         super.initDialogVeteran();
 
-        super.addNPC(1600,400, [{self: false, text: 'Who tf are you'}, 
-                                {self: true, text: 'idk bruh.'}],
+        super.addNPC(1600,400, [{self: false, text: 'Take whatever.'}, 
+                                {self: true, text: 'thanks.'}],
 
                                 [{self: false, text: 'Seems like everyone left the mines to go on strike.'}, 
                                 {self: true, text: "Rookies, I'll go take a look and see what's going on."}],
@@ -1329,6 +1329,18 @@ class Desert extends DoubleScene {
         this.p1Init = false;
         this.p2Init = false;
 
+        super.addNPC(700,200, [{self: true, text: 'Hmm, I will just go around'}],
+                            [{self: true, text: 'The roadblock is still firmly in place. We thought this would be enough to get their attention.'},
+                            {self: true, text: 'We were wrong.'}],
+                                null, 'memBubble', 
+                                {self: this.novicePortrait}, {self: this.veteranPortrait});
+
+        super.addNPC(300,400, [{self: true, text: 'I have priviledged access to this elevator thanks to my family.'}],
+                            [{self: true, text: 'We are not allowed down there. Tomorrow will be different though…'},
+                            {self: true, text: 'I should head back.'}],
+                                null, 'civBubble', 
+                                {self: this.novicePortrait}, {self: this.veteranPortrait});
+
         //this.addNPC(300,100, '...', '0xaaaaee');
         // super.initDialogNovice();
         // super.addNPC(500,300, [{self: false, text: 'I don’t understand why they are even complaining. A strike is unnecessary.'},
@@ -1399,6 +1411,7 @@ class Desert extends DoubleScene {
                 else{
                     this.player.destroy();
                     this.p1Init = false;
+                    this.cam.setVisible(false);
                 }
                     
 
@@ -1417,6 +1430,7 @@ class Desert extends DoubleScene {
                 else{
                     this.player.destroy();
                     this.p1Init = false;
+                    this.cam.setVisible(false);
                 }
                     
 
@@ -1459,6 +1473,7 @@ class Desert extends DoubleScene {
                 else {
                     this.player2.destroy();
                     this.p2Init = false;
+                    this.cam2.setVisible(false);
                 }
                     
                 if(this.scene.isActive('Town'))
@@ -1592,6 +1607,7 @@ class Town extends DoubleScene {
                 else{
                     this.player.destroy();
                     this.p1Init = false;
+                    this.cam.setVisible(false);
                 }
                     
 
@@ -1661,6 +1677,7 @@ class Town extends DoubleScene {
                 else {
                     this.player2.destroy();
                     this.p2Init = false;
+                    this.cam2.setVisible(false);
                 }
                     
                 if(this.scene.isActive('UndergroundMine'))
